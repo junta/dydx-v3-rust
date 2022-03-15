@@ -2,6 +2,14 @@
 name = "dydx-v3-rust"
 version = "0.1.0"
 edition = "2021"
+authors = [""]
+description = "Rust SDK for dYdX v3 API"
+license = "MIT"
+keywords = [""]
+documentation = ""
+repository = ""
+readme = "README.md"
+categories = [""]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -9,10 +17,12 @@ edition = "2021"
 hex = "0.4.3"
 web3 = "0.18.0"
 tokio = { version= "1", features = ["full"] }
+tokio-test = "0.4"
 reqwest = { version = "0.11.9", features = ["json"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 elliptic-curve = "0.11.12"
+http = "0.2"
 
 [dev-dependencies]
 speculate = "0.1.2"
