@@ -22,13 +22,13 @@ impl Response {
 }
 
 impl Client {
-    pub fn new(host: Option<&str>) -> Client {
+    pub fn new(env: &str) -> Client {
         Client {
             client: reqwest::ClientBuilder::new()
                 .timeout(Duration::from_secs(30))
                 .build()
                 .expect("Client::new()"),
-            api: if let Some(host) = host {
+            api: if env == "production" {
                 Api::Production
             } else {
                 Api::Staging
@@ -36,8 +36,15 @@ impl Client {
         }
     }
 
-    pub async fn markets(&self, parameters: &Value) -> Result<Response> {
+    pub async fn get_markets(&self, parameters: &Value) -> Result<Response> {
         self.get("markets", parameters).await
+    }
+
+    pub async fn get_orderbook(&self, parameters: &Value) -> Result<Response> {
+        self.get("orderbook", parameters).await
+    }
+    pub async fn get_trades(&self, parameters: &Value) -> Result<Response> {
+        self.get("trades", parameters).await
     }
 
     pub async fn get(&self, endpoint: &str, parameters: &Value) -> Result<Response> {

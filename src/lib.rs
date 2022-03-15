@@ -1,7 +1,7 @@
-mod api;
-mod client;
-mod error;
-pub mod public;
+pub mod api;
+pub mod client;
+pub mod error;
+pub mod modules;
 
 use api::Api;
 pub use client::Client;
