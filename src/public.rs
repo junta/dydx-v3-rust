@@ -1,4 +1,4 @@
-use super::{Api, Error, Result};
+use super::Result;
 use http::StatusCode;
 use reqwest::RequestBuilder;
 use serde::Deserialize;
@@ -7,35 +7,19 @@ use std::time::Duration;
 
 pub use super::structs;
 
-pub struct Client {
+pub struct Public<'a> {
     client: reqwest::Client,
-    api: Api,
+    pub host: &'a str,
 }
 
-#[derive(Debug)]
-pub struct Response {
-    pub response: reqwest::Response,
-    pub request: reqwest::Request,
-}
-
-impl Response {
-    pub async fn json(self) -> Result<Value> {
-        Ok(self.response.json().await?)
-    }
-}
-
-impl Client {
-    pub fn new(env: &str) -> Client {
-        Client {
+impl Public<'_> {
+    pub fn new(host: &str) -> Public {
+        Public {
             client: reqwest::ClientBuilder::new()
                 .timeout(Duration::from_secs(30))
                 .build()
                 .expect("Client::new()"),
-            api: if env == "production" {
-                Api::Production
-            } else {
-                Api::Staging
-            },
+            host,
         }
     }
 
@@ -52,16 +36,13 @@ impl Client {
         let response: structs::OrderbookResponse = self.get("orderbook/BTC-USD", None).await?;
         Ok(response)
     }
-    // pub async fn get_trades(&self, parameters: &Value) -> Result<Response> {
-    //     self.get("trades", parameters).await
-    // }
 
     pub async fn get<T: for<'de> Deserialize<'de>>(
         &self,
         path: &str,
         parameters: Option<&Vec<(&str, &str)>>,
     ) -> Result<T> {
-        let url = format!("{}/{}", &self.api.url(), path);
+        let url = format!("{}/v3/{}", &self.host, path);
         let req_builder = match parameters {
             Some(v) => self.client.get(url).query(v),
             None => self.client.get(url),
@@ -69,6 +50,22 @@ impl Client {
         let result = req_builder.send().await?.json::<T>().await?;
         Ok(result)
     }
+
+    // #[derive(Debug)]
+    // pub struct Response {
+    //     pub response: reqwest::Response,
+    //     pub request: reqwest::Request,
+    // }
+
+    // impl Response {
+    //     pub async fn json(self) -> Result<Value> {
+    //         Ok(self.response.json().await?)
+    //     }
+    // }
+
+    // pub async fn get_trades(&self, parameters: &Value) -> Result<Response> {
+    //     self.get("trades", parameters).await
+    // }
 
     // pub async fn get(&self, endpoint: &str) -> Result<Response> {
     //     let request = self.client.get(format!("{}/{}", self.api.url(), endpoint));
@@ -83,33 +80,33 @@ impl Client {
     //     Ok(self.request(request).await?)
     // }
 
-    async fn request(&self, request: RequestBuilder) -> Result<Response> {
-        let request = request.build()?;
+    // async fn request(&self, request: RequestBuilder) -> Result<Response> {
+    //     let request = request.build()?;
 
-        let response = self
-            .client
-            .execute(request.try_clone().expect(
-                "Error can remain unhandled because we're not using streams, which are the try_clone fail condition",
-            ))
-            .await;
+    //     let response = self
+    //         .client
+    //         .execute(request.try_clone().expect(
+    //             "Error can remain unhandled because we're not using streams, which are the try_clone fail condition",
+    //         ))
+    //         .await;
 
-        match &response {
-            Ok(response) => match response.status() {
-                StatusCode::NOT_FOUND => return Err(Error::NotFoundError),
-                StatusCode::UNAUTHORIZED => return Err(Error::AuthenticationError),
-                StatusCode::BAD_REQUEST => return Err(Error::InvalidRequestError),
-                _ => {}
-            },
-            Err(err) => {
-                if err.is_connect() || err.is_timeout() {
-                    return Err(Error::ApiConnectionError);
-                }
-            }
-        };
+    //     match &response {
+    //         Ok(response) => match response.status() {
+    //             StatusCode::NOT_FOUND => return Err(Error::NotFoundError),
+    //             StatusCode::UNAUTHORIZED => return Err(Error::AuthenticationError),
+    //             StatusCode::BAD_REQUEST => return Err(Error::InvalidRequestError),
+    //             _ => {}
+    //         },
+    //         Err(err) => {
+    //             if err.is_connect() || err.is_timeout() {
+    //                 return Err(Error::ApiConnectionError);
+    //             }
+    //         }
+    //     };
 
-        Ok(Response {
-            response: response?,
-            request,
-        })
-    }
+    //     Ok(Response {
+    //         response: response?,
+    //         request,
+    //     })
+    // }
 }

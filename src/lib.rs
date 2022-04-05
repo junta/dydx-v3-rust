@@ -1,12 +1,10 @@
-pub mod api;
-pub mod client;
+pub mod dydx_client;
 pub mod error;
 pub mod modules;
+pub mod public;
 pub mod structs;
 
-use api::Api;
-pub use client::Client;
-pub use client::Response;
-pub use error::Error;
+pub use dydx_client::DydxClient;
+pub use public::Public;
 
 pub type Result<T> = std::result::Result<T, error::Error>;
