@@ -16,7 +16,19 @@ speculate! {
                     }
                 it "get market test" {
                         b!(async {
-                                let response = client().get_markets(&json!({})).await.unwrap();
+                                let response = client().get_markets(&json!({"market": "BTC-USD"})).await.unwrap();
+                                // let body = response.json().await.unwrap();
+                                dbg!(response["markets"]["BTC-USD"]["volume24H"].as_str().unwrap());
+                                // dbg!(response);
+                        });
+                }
+
+
+                it "get orderbook test" {
+                        b!(async {
+                                let response = client().get_orderbook().await.unwrap();
+                                // let body = response.json().await.unwrap();
+                                // println!("{:?}", response);
                                 dbg!(response);
                         });
                 }
