@@ -1,5 +1,12 @@
 use serde::Deserialize;
 
+#[derive(Debug)]
+pub struct ApiKeyCredentials<'a> {
+    pub key: &'a str,
+    pub secret: &'a str,
+    pub passphrase: &'a str,
+}
+
 #[derive(Default, Debug, Clone, PartialEq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct MarketsResponse {
