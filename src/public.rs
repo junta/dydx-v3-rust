@@ -23,30 +23,51 @@ impl Public<'_> {
         }
     }
 
-    pub async fn get_markets(
-        &self,
-        parameters: Option<&Vec<(&str, &str)>>,
-    ) -> Result<structs::MarketsResponse> {
-        let response: structs::MarketsResponse = self.get("markets", parameters).await?;
-
+    pub async fn get_markets(&self, market: Option<&str>) -> Result<structs::MarketsResponse> {
+        let parameter = match market {
+            Some(v) => {
+                let mut params = Vec::new();
+                params.push(("market", v));
+                Some(params)
+            }
+            None => None,
+        };
+        let response: structs::MarketsResponse = self.get("markets", parameter).await?;
         Ok(response)
     }
 
-    pub async fn get_orderbook(&self) -> Result<structs::OrderbookResponse> {
-        let response: structs::OrderbookResponse = self.get("orderbook/BTC-USD", None).await?;
+    pub async fn get_orderbook(&self, market: &str) -> Result<structs::OrderbookResponse> {
+        let path = format!("orderbook/{}", market);
+        let response: structs::OrderbookResponse = self.get(path.as_str(), None).await?;
         Ok(response)
     }
+
+    // pub async fn verify_email(&self, token: &str) -> Result<T> {
+    //     let response = self.put("emails/verify-email", token).await?;
+    //     Ok(response)
+    // }
 
     pub async fn get<T: for<'de> Deserialize<'de>>(
         &self,
         path: &str,
-        parameters: Option<&Vec<(&str, &str)>>,
+        parameters: Option<Vec<(&str, &str)>>,
     ) -> Result<T> {
         let url = format!("{}/v3/{}", &self.host, path);
         let req_builder = match parameters {
-            Some(v) => self.client.get(url).query(v),
+            Some(v) => self.client.get(url).query(&v),
             None => self.client.get(url),
         };
+        let result = req_builder.send().await?.json::<T>().await?;
+        Ok(result)
+    }
+
+    pub async fn put<T: for<'de> Deserialize<'de>>(
+        &self,
+        path: &str,
+        parameters: &Vec<(&str, &str)>,
+    ) -> Result<T> {
+        let url = format!("{}/v3/{}", &self.host, path);
+        let req_builder = self.client.put(url).query(parameters);
         let result = req_builder.send().await?.json::<T>().await?;
         Ok(result)
     }

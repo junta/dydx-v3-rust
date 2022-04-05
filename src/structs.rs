@@ -13,6 +13,43 @@ pub struct MarketsResponse {
     pub markets: Markets,
 }
 
+#[non_exhaustive]
+pub struct DydxMarket;
+
+impl DydxMarket {
+    pub const BTC_USD: &'static str = "BTC-USD";
+    pub const SUSHI_USD: &'static str = "SUSHI-USD";
+    pub const AVAX_USD: &'static str = "AVAX-USD";
+    pub const INCH_USD: &'static str = "1INCH-USD";
+    pub const ETH_USD: &'static str = "ETH-USD";
+    pub const XMR_USD: &'static str = "XMR-USD";
+    pub const COMP_USD: &'static str = "COMP-USD";
+    pub const ALGO_USD: &'static str = "ALGO-USD";
+    pub const BCH_USD: &'static str = "BCH-USD";
+    pub const CRV_USD: &'static str = "CRV-USD";
+    pub const ETC_USD: &'static str = "ETC-USD";
+    pub const UNI_USD: &'static str = "UNI-USD";
+    pub const MKR_USD: &'static str = "MKR-USD";
+    pub const LTC_USD: &'static str = "LTC-USD";
+    pub const EOS_USD: &'static str = "EOS-USD";
+    pub const DOGE_USD: &'static str = "DOGE-USD";
+    pub const ATOM_USD: &'static str = "ATOM-USD";
+    pub const ZRX_USD: &'static str = "ZRX-USD";
+    pub const SOL_USD: &'static str = "SOL-USD";
+    pub const UMA_USD: &'static str = "UMA-USD";
+    pub const AAVE_USD: &'static str = "AAVE-USD";
+    pub const ADA_USD: &'static str = "ADA-USD";
+    pub const SNX_USD: &'static str = "SNX-USD";
+    pub const FIL_USD: &'static str = "FIL-USD";
+    pub const ZEC_USD: &'static str = "ZEC-USD";
+    pub const YFI_USD: &'static str = "YFI-USD";
+    pub const XLM_USD: &'static str = "XLM-USD";
+    pub const LINK_USD: &'static str = "LINK-USD";
+    pub const DOT_USD: &'static str = "DOT-USD";
+    pub const MATIC_USD: &'static str = "MATIC-USD";
+    pub const ENJ_USD: &'static str = "ENJ-USD";
+}
+
 #[derive(Default, Debug, Clone, PartialEq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Markets {

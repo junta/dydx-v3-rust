@@ -26,7 +26,7 @@ impl Private<'_> {
         }
     }
 
-    pub fn get_account(&self) -> usize {
+    pub fn get_account(&self, ethereum_address: &str) -> usize {
         1
     }
 }
