@@ -70,9 +70,17 @@ speculate! {
 
                 it "get candles test" {
                         b!(async {
-                                let response = DydxClient().public.get_candles(DydxMarket::ETH_USD, Some("15MINS")).await.unwrap();
+                                let response = DydxClient().public.get_candles(DydxMarket::ETH_USD, Some("15MINS"), Some("2022-01-05T17:33:43.163Z"),Some("2022-01-06T17:33:43.163Z"), Some("4")).await.unwrap();
                                 // println!("{:?}", response);
                                 dbg!(response);
+                        });
+                }
+
+                it "get candles test with no parameter" {
+                        b!(async {
+                                let response = DydxClient().public.get_candles(DydxMarket::ETH_USD, None, None, None, None).await.unwrap();
+                                // println!("{:?}", response);
+                                // dbg!(response);
                         });
                 }
         }

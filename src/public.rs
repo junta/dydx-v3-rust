@@ -24,21 +24,17 @@ impl Public<'_> {
     }
 
     pub async fn get_markets(&self, market: Option<&str>) -> Result<structs::MarketsResponse> {
-        let parameter = match market {
-            Some(v) => {
-                let mut params = Vec::new();
-                params.push(("market", v));
-                Some(params)
-            }
-            None => None,
-        };
+        let mut parameter = Vec::new();
+        if let Some(local_var) = market {
+            parameter.push(("market", local_var));
+        }
         let response: structs::MarketsResponse = self.get("markets", parameter).await?;
         Ok(response)
     }
 
     pub async fn get_orderbook(&self, market: &str) -> Result<structs::OrderbookResponse> {
         let path = format!("orderbook/{}", market);
-        let response: structs::OrderbookResponse = self.get(path.as_str(), None).await?;
+        let response: structs::OrderbookResponse = self.get(path.as_str(), Vec::new()).await?;
         Ok(response)
     }
 
@@ -48,14 +44,11 @@ impl Public<'_> {
         starting_before_or_at: Option<&str>,
     ) -> Result<structs::TradesResponse> {
         let path = format!("trades/{}", market);
-        let parameter = match starting_before_or_at {
-            Some(v) => {
-                let mut params = Vec::new();
-                params.push(("startingBeforeOrAt", v));
-                Some(params)
-            }
-            None => None,
-        };
+        let mut parameter = Vec::new();
+        if let Some(local_var) = starting_before_or_at {
+            parameter.push(("startingBeforeOrAt", local_var));
+        }
+
         let response: structs::TradesResponse = self.get(path.as_str(), parameter).await?;
         Ok(response)
     }
@@ -64,30 +57,27 @@ impl Public<'_> {
         &self,
         market: &str,
         resolution: Option<&str>,
+        from_iso: Option<&str>,
+        to_iso: Option<&str>,
+        // TODO: should be usize
         limit: Option<&str>,
     ) -> Result<structs::CandlesResponse> {
         let path = format!("candles/{}", market);
         let mut parameter = Vec::new();
-        if let Some(ref local_var_str) = resolution {
-            parameter.push(("resolution", local_var_str));
+        if let Some(local_var) = resolution {
+            parameter.push(("resolution", local_var));
+        }
+        if let Some(local_var) = from_iso {
+            parameter.push(("fromISO", local_var));
+        }
+        if let Some(local_var) = to_iso {
+            parameter.push(("toISO", local_var));
+        }
+        if let Some(local_var) = limit {
+            parameter.push(("limit", local_var));
         }
 
-        // let parameter = match resolution {
-        //     Some(v) => {
-        //         let mut params = Vec::new();
-        //         params.push(("resolution", v));
-        //         Some(params)
-        //     }
-        //     None => None,
-        // };
-        // let parameter = match limit {
-        //     Some(v) => {
-        //         parameter.unwrap().push(("resolution", v));
-        //         Some(parameter)
-        //     }
-        //     None => None,
-        // };
-        let response: structs::CandlesResponse = self.get(path.as_str(), Option(parameter)).await?;
+        let response: structs::CandlesResponse = self.get(path.as_str(), parameter).await?;
         Ok(response)
     }
 
@@ -99,13 +89,11 @@ impl Public<'_> {
     pub async fn get<T: for<'de> Deserialize<'de>>(
         &self,
         path: &str,
-        parameters: Option<Vec<(&str, &str)>>,
+        parameters: Vec<(&str, &str)>,
     ) -> Result<T> {
         let url = format!("{}/v3/{}", &self.host, path);
-        let req_builder = match parameters {
-            Some(v) => self.client.get(url).query(&v),
-            None => self.client.get(url),
-        };
+        let req_builder = self.client.get(url).query(&parameters);
+        // println!("{:?}", req_builder);
         let result = req_builder.send().await?.json::<T>().await?;
         Ok(result)
     }
