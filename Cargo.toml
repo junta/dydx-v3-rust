@@ -6,8 +6,8 @@ authors = ["0xIbuki"]
 description = "Rust SDK for dYdX v3 API"
 license = "MIT"
 keywords = ["sdk", "dydx"]
-documentation = ""
-repository = ""
+# documentation = ""
+# repository = ""
 readme = "README.md"
 categories = ["api-bindings"]
 
