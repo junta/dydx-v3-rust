@@ -55,7 +55,7 @@ speculate! {
                 it "get orderbook test" {
                         b!(async {
                                 let response = DydxClient().public.get_orderbook(DydxMarket::ETH_USD).await.unwrap();
-                                println!("{:?}", response.asks[0].size);
+                                // println!("{:?}", response.asks[0].size);
                                 // dbg!(response);
                         });
                 }
@@ -72,7 +72,7 @@ speculate! {
                         b!(async {
                                 let response = DydxClient().public.get_candles(DydxMarket::ETH_USD, Some("15MINS"), Some("2022-01-05T17:33:43.163Z"),Some("2022-01-06T17:33:43.163Z"), Some("4")).await.unwrap();
                                 // println!("{:?}", response);
-                                dbg!(response);
+                                // dbg!(response);
                         });
                 }
 
@@ -81,6 +81,15 @@ speculate! {
                                 let response = DydxClient().public.get_candles(DydxMarket::ETH_USD, None, None, None, None).await.unwrap();
                                 // println!("{:?}", response);
                                 // dbg!(response);
+                        });
+                }
+
+
+                it "verify email test" {
+                        b!(async {
+                                let response = DydxClient().public.verify_email("aaa").await.unwrap();
+                                // println!("{:?}", response);
+                                dbg!(response);
                         });
                 }
         }

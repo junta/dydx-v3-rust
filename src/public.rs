@@ -81,10 +81,11 @@ impl Public<'_> {
         Ok(response)
     }
 
-    // pub async fn verify_email(&self, token: &str) -> Result<T> {
-    //     let response = self.put("emails/verify-email", token).await?;
-    //     Ok(response)
-    // }
+    pub async fn verify_email(&self, token: &str) -> Result<http::StatusCode> {
+        let param = vec![("token", token)];
+        let response = self.put("emails/verify-email", &param).await?;
+        Ok(response)
+    }
 
     pub async fn get<T: for<'de> Deserialize<'de>>(
         &self,
@@ -98,15 +99,15 @@ impl Public<'_> {
         Ok(result)
     }
 
-    pub async fn put<T: for<'de> Deserialize<'de>>(
+    pub async fn put(
         &self,
         path: &str,
         parameters: &Vec<(&str, &str)>,
-    ) -> Result<T> {
+    ) -> Result<http::StatusCode> {
         let url = format!("{}/v3/{}", &self.host, path);
         let req_builder = self.client.put(url).query(parameters);
-        let result = req_builder.send().await?.json::<T>().await?;
-        Ok(result)
+        let result = req_builder.send().await?;
+        Ok(result.status())
     }
 
     // #[derive(Debug)]
