@@ -5,11 +5,11 @@ edition = "2021"
 authors = ["0xIbuki"]
 description = "Rust SDK for dYdX v3 API"
 license = "MIT"
-keywords = [""]
+keywords = ["sdk", "dydx"]
 documentation = ""
 repository = ""
 readme = "README.md"
-categories = [""]
+categories = ["api-bindings"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
