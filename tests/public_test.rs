@@ -59,5 +59,21 @@ speculate! {
                                 // dbg!(response);
                         });
                 }
+
+                it "get trades test" {
+                        b!(async {
+                                let response = DydxClient().public.get_trades(DydxMarket::ETH_USD, None).await.unwrap();
+                                // dbg!(response);
+                        });
+                }
+
+
+                it "get candles test" {
+                        b!(async {
+                                let response = DydxClient().public.get_candles(DydxMarket::ETH_USD, Some("15MINS")).await.unwrap();
+                                // println!("{:?}", response);
+                                dbg!(response);
+                        });
+                }
         }
 }

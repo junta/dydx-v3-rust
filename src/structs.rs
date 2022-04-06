@@ -7,12 +7,27 @@ pub struct ApiKeyCredentials<'a> {
     pub passphrase: &'a str,
 }
 
+#[non_exhaustive]
+#[derive(Default, Debug, Clone, PartialEq, Deserialize)]
+pub struct OrderSide;
+
+impl OrderSide {
+    pub const BUY: &'static str = "BUY";
+    pub const SELL: &'static str = "SELL";
+}
+
+pub enum Side {
+    BUY,
+    SEll,
+}
+
 #[derive(Default, Debug, Clone, PartialEq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct MarketsResponse {
     pub markets: Markets,
 }
 
+#[derive(Default, Debug, Clone, PartialEq, Deserialize)]
 #[non_exhaustive]
 pub struct DydxMarket;
 
@@ -162,4 +177,42 @@ pub struct OrderbookResponse {
 pub struct OrderbookResponseOrder {
     pub size: String,
     pub price: String,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Trade {
+    // TODO: change to enum constant
+    pub side: String,
+    pub size: String,
+    pub price: String,
+    pub created_at: String,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Deserialize)]
+pub struct TradesResponse {
+    pub trades: Vec<Trade>,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Candle {
+    pub started_at: String,
+    pub updated_at: String,
+    pub market: String,
+    // pub resolution: CandleResolution;
+    pub resolution: String,
+    pub low: String,
+    pub high: String,
+    pub open: String,
+    pub close: String,
+    pub base_token_volume: String,
+    pub trades: String,
+    pub usd_volume: String,
+    pub starting_open_interest: String,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Deserialize)]
+pub struct CandlesResponse {
+    pub candles: Vec<Candle>,
 }

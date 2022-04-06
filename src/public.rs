@@ -42,6 +42,55 @@ impl Public<'_> {
         Ok(response)
     }
 
+    pub async fn get_trades(
+        &self,
+        market: &str,
+        starting_before_or_at: Option<&str>,
+    ) -> Result<structs::TradesResponse> {
+        let path = format!("trades/{}", market);
+        let parameter = match starting_before_or_at {
+            Some(v) => {
+                let mut params = Vec::new();
+                params.push(("startingBeforeOrAt", v));
+                Some(params)
+            }
+            None => None,
+        };
+        let response: structs::TradesResponse = self.get(path.as_str(), parameter).await?;
+        Ok(response)
+    }
+
+    pub async fn get_candles(
+        &self,
+        market: &str,
+        resolution: Option<&str>,
+        limit: Option<&str>,
+    ) -> Result<structs::CandlesResponse> {
+        let path = format!("candles/{}", market);
+        let mut parameter = Vec::new();
+        if let Some(ref local_var_str) = resolution {
+            parameter.push(("resolution", local_var_str));
+        }
+
+        // let parameter = match resolution {
+        //     Some(v) => {
+        //         let mut params = Vec::new();
+        //         params.push(("resolution", v));
+        //         Some(params)
+        //     }
+        //     None => None,
+        // };
+        // let parameter = match limit {
+        //     Some(v) => {
+        //         parameter.unwrap().push(("resolution", v));
+        //         Some(parameter)
+        //     }
+        //     None => None,
+        // };
+        let response: structs::CandlesResponse = self.get(path.as_str(), Option(parameter)).await?;
+        Ok(response)
+    }
+
     // pub async fn verify_email(&self, token: &str) -> Result<T> {
     //     let response = self.put("emails/verify-email", token).await?;
     //     Ok(response)
@@ -82,10 +131,6 @@ impl Public<'_> {
     //     pub async fn json(self) -> Result<Value> {
     //         Ok(self.response.json().await?)
     //     }
-    // }
-
-    // pub async fn get_trades(&self, parameters: &Value) -> Result<Response> {
-    //     self.get("trades", parameters).await
     // }
 
     // pub async fn get(&self, endpoint: &str) -> Result<Response> {
