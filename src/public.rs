@@ -81,7 +81,7 @@ impl Public<'_> {
         Ok(response)
     }
 
-    pub async fn verify_email(&self, token: &str) -> Result<http::StatusCode> {
+    pub async fn verify_email(&self, token: &str) -> Result<StatusCode> {
         let param = vec![("token", token)];
         let response = self.put("emails/verify-email", &param).await?;
         Ok(response)
@@ -99,11 +99,7 @@ impl Public<'_> {
         Ok(result)
     }
 
-    pub async fn put(
-        &self,
-        path: &str,
-        parameters: &Vec<(&str, &str)>,
-    ) -> Result<http::StatusCode> {
+    pub async fn put(&self, path: &str, parameters: &Vec<(&str, &str)>) -> Result<StatusCode> {
         let url = format!("{}/v3/{}", &self.host, path);
         let req_builder = self.client.put(url).query(parameters);
         let result = req_builder.send().await?;

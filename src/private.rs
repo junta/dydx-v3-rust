@@ -26,7 +26,23 @@ impl Private<'_> {
         }
     }
 
-    pub fn get_account(&self, ethereum_address: &str) -> usize {
-        1
+    pub async fn get_account(&self, ethereum_address: &str) -> Result<structs::AccountResponse> {
+        let accont_id = "ae00878c-b6a9-52bc-abf6-25f24219fd4a";
+        let path = format!("accounts/{}", accont_id);
+        let param = vec![("ethereumAddress", ethereum_address)];
+        let response: structs::AccountResponse = self.get(path.as_str(), param).await?;
+        Ok(response)
+    }
+
+    pub async fn get<T: for<'de> Deserialize<'de>>(
+        &self,
+        path: &str,
+        parameters: Vec<(&str, &str)>,
+    ) -> Result<T> {
+        let url = format!("{}/v3/{}", &self.host, path);
+        let req_builder = self.client.get(url).query(&parameters);
+        // println!("{:?}", req_builder);
+        let result = req_builder.send().await?.json::<T>().await?;
+        Ok(result)
     }
 }

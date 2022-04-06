@@ -4,6 +4,7 @@ macro_rules! b {
         };
 }
 
+use dydx_v3_rust::db::*;
 use dydx_v3_rust::structs::*;
 use dydx_v3_rust::ClientOptions;
 #[cfg(test)]
@@ -16,6 +17,7 @@ speculate! {
         describe "publicTest" {
                 fn DydxClient() -> DydxClient<'static> {
                         let api_key = ApiKeyCredentials {
+                                // acount2 testnet
                                 key: "ed85a071-c6b4-b4f1-c965-efb238d16c5e",
                                 secret: "1iDz27dyq4RspTkP-rfTcFN6ouxTgHmTT_sKJogU",
                                 passphrase: "CfbXaq6O-Yd3jKOqh10i"
@@ -33,7 +35,7 @@ speculate! {
                         dbg!(DydxClient().host);
                         dbg!(DydxClient().network_id);
                         dbg!(DydxClient().api_key_credentials);
-                        // dbg!(DydxClient().private.get_account());
+                        // dbg!(DydxClient().private.get_account("0x1e88f23864a8FE784eB152967AccDb394D3b88AD"));
                 }
                 it "get market test" {
                         b!(async {
@@ -88,6 +90,22 @@ speculate! {
                 it "verify email test" {
                         b!(async {
                                 let response = DydxClient().public.verify_email("aaa").await.unwrap();
+                                // println!("{:?}", response);
+                                // dbg!(response);
+                        });
+                }
+
+                it "get_user_id test" {
+                        b!(async {
+                                let uuid = get_user_id();
+                                // println!("{:?}", response);
+                                // dbg!(uuid);
+                        });
+                }
+
+                it "get account test" {
+                        b!(async {
+                                let response = DydxClient().private.get_account("0x1e88f23864a8FE784eB152967AccDb394D3b88AD").await.unwrap();
                                 // println!("{:?}", response);
                                 dbg!(response);
                         });

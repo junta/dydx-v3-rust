@@ -1,3 +1,4 @@
+pub mod db;
 pub mod dydx_client;
 pub mod error;
 pub mod modules;
