@@ -1,3 +1,4 @@
+use super::helper::get_account_id;
 pub use super::structs::*;
 use super::{Error, Result};
 use chrono::Utc;
@@ -32,9 +33,8 @@ impl Private<'_> {
     }
 
     pub async fn get_account(&self, ethereum_address: &str) -> Result<AccountResponse> {
-        let accont_id = "ae00878c-b6a9-52bc-abf6-25f24219fd4a";
-        let path = format!("accounts/{}", accont_id);
-        // let response = self.get(path.as_str(), Vec::new()).await?;
+        let account_id = get_account_id(ethereum_address);
+        let path = format!("accounts/{}", account_id);
         let response = self.get(path.as_str(), Vec::new()).await;
         response
     }
@@ -64,7 +64,7 @@ impl Private<'_> {
             parameters.push(("limit", local_var));
         }
         if let Some(local_var) = created_before_or_at {
-            parameters.push(("created_before_or_at", local_var));
+            parameters.push(("createdBeforeOrAt", local_var));
         }
         let response = self.get(path, parameters).await;
         response
@@ -117,16 +117,6 @@ impl Private<'_> {
                 // }
             }
         };
-
-        // let result = response?.json::<T>().await?;
-
-        // Ok(result)
-        // let res = req_builder.send().await?;
-        // dbg!("{:?}", &res);
-
-        // println!("{:?}", res.text().await);
-
-        // let result = res.json::<T>().await?;
     }
 
     pub fn sign(&self, request_path: &str, method: &str, iso_timestamp: &String) -> String {

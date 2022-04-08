@@ -4,7 +4,7 @@ macro_rules! b {
         };
 }
 
-use dydx_v3_rust::db::*;
+use dydx_v3_rust::helper::*;
 use dydx_v3_rust::structs::*;
 use dydx_v3_rust::ClientOptions;
 #[cfg(test)]
@@ -38,9 +38,9 @@ speculate! {
                         // dbg!(DydxClient().api_key_credentials);
                 }
 
-                it "getUserId" {
+                it "getAccountId" {
                         b!(async {
-                                let uuid = get_user_id();
+                                let uuid = get_account_id("0x0De1C59f3AA4938B0bDcC070B4Fa9F395A4D6d25");
                                 // println!("{:?}", response);
                                 // dbg!(uuid);
                         });
@@ -50,7 +50,7 @@ speculate! {
                         b!(async {
                                 let response = DydxClient().private.unwrap().get_account("0x1e88f23864a8FE784eB152967AccDb394D3b88AD").await.unwrap();
                                 // println!("{:?}", response);
-                                // dbg!(response);
+                                dbg!(response);
                         });
                 }
 
@@ -84,7 +84,7 @@ speculate! {
 
                 it "getPositions" {
                         b!(async {
-                                let response = DydxClient().private.unwrap().get_positions(Some(DydxMarket::BTC_USD), None, Some("1"), None).await.unwrap();
+                                let response = DydxClient().private.unwrap().get_positions(Some(DydxMarket::BTC_USD), None, None, Some("2022-04-01T02:43:02.946Z")).await.unwrap();
                                 println!("{:?}", response);
                                 // dbg!(response);
                         });

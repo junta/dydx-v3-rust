@@ -7,20 +7,26 @@ pub struct ApiKeyCredentials<'a> {
     pub passphrase: &'a str,
 }
 
-#[non_exhaustive]
-#[derive(Default, Debug, Clone, PartialEq, Deserialize)]
-pub struct OrderSide;
+// #[non_exhaustive]
+// #[derive(Default, Debug, Clone, PartialEq, Deserialize)]
+// pub struct OrderSide;
 
-impl OrderSide {
-    pub const BUY: &'static str = "BUY";
-    pub const SELL: &'static str = "SELL";
-}
+// impl OrderSide {
+//     pub const BUY: &'static str = "BUY";
+//     pub const SELL: &'static str = "SELL";
+// }
 
-pub enum Side {
-    BUY,
-    SEll,
-}
+// pub enum Side {
+//     BUY,
+//     SEll,
+// }
 
+// pub struct Side;
+
+// impl Side {
+//     pub const BUY: &'static str = "BUY";
+//     pub const SELL: &'static str = "SELL";
+// }
 #[derive(Default, Debug, Clone, PartialEq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct MarketsResponse {

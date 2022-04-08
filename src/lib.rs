@@ -1,6 +1,6 @@
-pub mod db;
 pub mod dydx_client;
 pub mod error;
+pub mod helper;
 pub mod modules;
 pub mod private;
 pub mod public;

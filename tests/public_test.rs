@@ -4,7 +4,7 @@ macro_rules! b {
         };
 }
 
-use dydx_v3_rust::db::*;
+use dydx_v3_rust::helper::*;
 use dydx_v3_rust::structs::*;
 use dydx_v3_rust::ClientOptions;
 #[cfg(test)]
@@ -59,7 +59,7 @@ speculate! {
                 it "getTrades" {
                         b!(async {
                                 let response = DydxClient().public.get_trades(DydxMarket::ETH_USD, None).await.unwrap();
-                                // dbg!(response);
+                                dbg!(response);
                         });
                 }
 
