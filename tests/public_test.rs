@@ -23,7 +23,7 @@ speculate! {
                                 passphrase: "CfbXaq6O-Yd3jKOqh10i"
                         };
                         let options: ClientOptions = ClientOptions {
-                                network_id: Some(3),
+                                network_id: Some(1),
                                 api_timeout: None,
                                 api_key_credentials: Some(api_key),
                         };
@@ -32,7 +32,7 @@ speculate! {
                     }
 
                 it "get client" {
-                        dbg!(DydxClient().host);
+                        // dbg!(DydxClient().host);
                         dbg!(DydxClient().network_id);
                         dbg!(DydxClient().api_key_credentials);
                         // dbg!(DydxClient().private.get_account("0x1e88f23864a8FE784eB152967AccDb394D3b88AD"));
@@ -105,10 +105,19 @@ speculate! {
 
                 it "get account test" {
                         b!(async {
-                                let response = DydxClient().private.get_account("0x1e88f23864a8FE784eB152967AccDb394D3b88AD").await.unwrap();
-                                // println!("{:?}", response);
-                                dbg!(response);
+                                let response = DydxClient().private.get_account("0x0De1C59f3AA4938B0bDcC070B4Fa9F395A4D6d25").await.unwrap();
+                                println!("{:?}", response);
+                                // dbg!(response);
                         });
                 }
+
+                // it "get accounts test" {
+                //         b!(async {
+                //                 let response = DydxClient().private.get_accounts().await.unwrap();
+                //                 // DydxClient().private.sign();
+                //                 println!("{:?}", response);
+                //                 // dbg!(response);
+                //         });
+                // }
         }
 }

@@ -99,7 +99,7 @@ impl Public<'_> {
         Ok(result)
     }
 
-    pub async fn put(&self, path: &str, parameters: &Vec<(&str, &str)>) -> Result<StatusCode> {
+    pub async fn put(&self, path: &str, parameters: &[(&str, &str)]) -> Result<StatusCode> {
         let url = format!("{}/v3/{}", &self.host, path);
         let req_builder = self.client.put(url).query(parameters);
         let result = req_builder.send().await?;

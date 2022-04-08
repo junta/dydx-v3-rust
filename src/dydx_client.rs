@@ -32,7 +32,7 @@ impl DydxClient<'_> {
 
         DydxClient {
             host,
-            network_id: network_id,
+            network_id,
             // network_id: match &_options {
             //     Some(v) => v.network_id.unwrap_or(1),
             //     None => 1,

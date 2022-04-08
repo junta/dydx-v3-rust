@@ -218,6 +218,11 @@ pub struct CandlesResponse {
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Deserialize)]
+pub struct AccountsResponse {
+    pub account: AccountResponse,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AccountResponse {
     pub stark_key: String,
