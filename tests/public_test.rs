@@ -27,24 +27,24 @@ speculate! {
                                 api_timeout: None,
                                 api_key_credentials: Some(api_key),
                         };
-                        DydxClient::new("https://api.dydx.exchange", Some(options))
-                        // DydxClient::new("https://api.dydx.exchange", None);
+                        // DydxClient::new("https://api.dydx.exchange", Some(options))
+                        DydxClient::new("https://api.dydx.exchange", None)
                     }
 
-                it "get client" {
+                it "getClient" {
                         // dbg!(DydxClient().host);
                         dbg!(DydxClient().network_id);
                         dbg!(DydxClient().api_key_credentials);
                         // dbg!(DydxClient().private.get_account("0x1e88f23864a8FE784eB152967AccDb394D3b88AD"));
                 }
-                it "get market test" {
+                it "getMarket" {
                         b!(async {
                                 let response = DydxClient().public.get_markets(Some(DydxMarket::BTC_USD)).await.unwrap();
                                 // dbg!(response.markets.btc_usd.unwrap().max_position_size);
                         });
                 }
 
-                it "get market test with no parameter" {
+                it "getMarketWithNoParameter" {
                         b!(async {
                                 let response = DydxClient().public.get_markets(None).await.unwrap();
                                 // dbg!(response.markets.eth_usd.unwrap());
@@ -54,7 +54,7 @@ speculate! {
                 }
 
 
-                it "get orderbook test" {
+                it "getOrderbook" {
                         b!(async {
                                 let response = DydxClient().public.get_orderbook(DydxMarket::ETH_USD).await.unwrap();
                                 // println!("{:?}", response.asks[0].size);
@@ -62,7 +62,7 @@ speculate! {
                         });
                 }
 
-                it "get trades test" {
+                it "getTrades" {
                         b!(async {
                                 let response = DydxClient().public.get_trades(DydxMarket::ETH_USD, None).await.unwrap();
                                 // dbg!(response);
@@ -70,7 +70,7 @@ speculate! {
                 }
 
 
-                it "get candles test" {
+                it "getCandles" {
                         b!(async {
                                 let response = DydxClient().public.get_candles(DydxMarket::ETH_USD, Some("15MINS"), Some("2022-01-05T17:33:43.163Z"),Some("2022-01-06T17:33:43.163Z"), Some("4")).await.unwrap();
                                 // println!("{:?}", response);
@@ -78,7 +78,7 @@ speculate! {
                         });
                 }
 
-                it "get candles test with no parameter" {
+                it "getCandlesWithNoParameter" {
                         b!(async {
                                 let response = DydxClient().public.get_candles(DydxMarket::ETH_USD, None, None, None, None).await.unwrap();
                                 // println!("{:?}", response);
@@ -87,37 +87,12 @@ speculate! {
                 }
 
 
-                it "verify email test" {
+                it "verifyEmail" {
                         b!(async {
                                 let response = DydxClient().public.verify_email("aaa").await.unwrap();
                                 // println!("{:?}", response);
                                 // dbg!(response);
                         });
                 }
-
-                it "get_user_id test" {
-                        b!(async {
-                                let uuid = get_user_id();
-                                // println!("{:?}", response);
-                                // dbg!(uuid);
-                        });
-                }
-
-                it "get account test" {
-                        b!(async {
-                                let response = DydxClient().private.get_account("0x0De1C59f3AA4938B0bDcC070B4Fa9F395A4D6d25").await.unwrap();
-                                println!("{:?}", response);
-                                // dbg!(response);
-                        });
-                }
-
-                // it "get accounts test" {
-                //         b!(async {
-                //                 let response = DydxClient().private.get_accounts().await.unwrap();
-                //                 // DydxClient().private.sign();
-                //                 println!("{:?}", response);
-                //                 // dbg!(response);
-                //         });
-                // }
         }
 }

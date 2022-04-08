@@ -34,7 +34,7 @@ impl Private<'_> {
     }
 
     pub async fn get_account(&self, ethereum_address: &str) -> Result<structs::AccountsResponse> {
-        let accont_id = "4b16cbab-f003-5354-bab7-e654a333d302";
+        let accont_id = "ae00878c-b6a9-52bc-abf6-25f24219fd4a";
         let path = format!("accounts/{}", accont_id);
         let response = self.get(path.as_str(), Vec::new()).await?;
         Ok(response)
@@ -65,9 +65,8 @@ impl Private<'_> {
             .get(url)
             .header("DYDX-SIGNATURE", signature.as_str())
             .header("DYDX-TIMESTAMP", iso_timestamp.as_str())
-            .header("DYDX-API-KEY", "95ded6c7-4342-54c2-96f3-7867f3aa4dd1")
-            // .header("DYDX-TIMESTAMP", "2022-04-07T08:56:13.947Z")
-            .header("DYDX-PASSPHRASE", "oQmxIL1eu6rRFfeODZKt")
+            .header("DYDX-API-KEY", self.api_key_credentials.key)
+            .header("DYDX-PASSPHRASE", self.api_key_credentials.passphrase)
             .query(&parameters);
 
         // println!("{:?}", req_builder);
@@ -83,12 +82,9 @@ impl Private<'_> {
 
     pub fn sign(&self, request_path: &str, method: &str, iso_timestamp: &String) -> String {
         let message = String::from(iso_timestamp) + method + request_path;
-        // let message = String::from(
-        //     "2022-04-07T08:56:13.947ZGET/v3/accounts/4b16cbab-f003-5354-bab7-e654a333d302",
-        // );
-        dbg!(&message);
-        let secret = "FHKDt6oPOpE47y7gPsB6u2aMdA-rlICGhhUiC6Un";
 
+        dbg!(&message);
+        let secret = self.api_key_credentials.secret;
         let secret = base64::decode_config(secret, base64::URL_SAFE).unwrap();
         // dbg!(&secret);
 
