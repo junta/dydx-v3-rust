@@ -1,8 +1,6 @@
-use super::Result;
+use super::{Error, Result};
 use http::StatusCode;
-use reqwest::RequestBuilder;
 use serde::Deserialize;
-use serde_json::Value;
 use std::time::Duration;
 
 pub use super::structs;
@@ -63,21 +61,21 @@ impl Public<'_> {
         limit: Option<&str>,
     ) -> Result<structs::CandlesResponse> {
         let path = format!("candles/{}", market);
-        let mut parameter = Vec::new();
+        let mut parameters = Vec::new();
         if let Some(local_var) = resolution {
-            parameter.push(("resolution", local_var));
+            parameters.push(("resolution", local_var));
         }
         if let Some(local_var) = from_iso {
-            parameter.push(("fromISO", local_var));
+            parameters.push(("fromISO", local_var));
         }
         if let Some(local_var) = to_iso {
-            parameter.push(("toISO", local_var));
+            parameters.push(("toISO", local_var));
         }
         if let Some(local_var) = limit {
-            parameter.push(("limit", local_var));
+            parameters.push(("limit", local_var));
         }
 
-        let response: structs::CandlesResponse = self.get(path.as_str(), parameter).await?;
+        let response: structs::CandlesResponse = self.get(path.as_str(), parameters).await?;
         Ok(response)
     }
 
@@ -95,7 +93,24 @@ impl Public<'_> {
         let url = format!("{}/v3/{}", &self.host, path);
         let req_builder = self.client.get(url).query(&parameters);
         // println!("{:?}", req_builder);
-        let result = req_builder.send().await?.json::<T>().await?;
+        let response = req_builder.send().await;
+
+        match &response {
+            Ok(response) => match response.status() {
+                StatusCode::NOT_FOUND => return Err(Error::NotFoundError),
+                StatusCode::UNAUTHORIZED => return Err(Error::AuthenticationError),
+                StatusCode::BAD_REQUEST => return Err(Error::InvalidRequestError),
+                _ => {}
+            },
+            Err(err) => {
+                if err.is_connect() || err.is_timeout() {
+                    return Err(Error::ApiConnectionError);
+                }
+            }
+        };
+
+        let result = response?.json::<T>().await?;
+
         Ok(result)
     }
 
@@ -105,59 +120,4 @@ impl Public<'_> {
         let result = req_builder.send().await?;
         Ok(result.status())
     }
-
-    // #[derive(Debug)]
-    // pub struct Response {
-    //     pub response: reqwest::Response,
-    //     pub request: reqwest::Request,
-    // }
-
-    // impl Response {
-    //     pub async fn json(self) -> Result<Value> {
-    //         Ok(self.response.json().await?)
-    //     }
-    // }
-
-    // pub async fn get(&self, endpoint: &str) -> Result<Response> {
-    //     let request = self.client.get(format!("{}/{}", self.api.url(), endpoint));
-    //     Ok(self.request(request).await?)
-    // }
-
-    // pub async fn get_withparam(&self, endpoint: &str, parameters: &Value) -> Result<Response> {
-    //     let request = self
-    //         .client
-    //         .get(format!("{}/{}", self.api.url(), endpoint))
-    //         .query(parameters);
-    //     Ok(self.request(request).await?)
-    // }
-
-    // async fn request(&self, request: RequestBuilder) -> Result<Response> {
-    //     let request = request.build()?;
-
-    //     let response = self
-    //         .client
-    //         .execute(request.try_clone().expect(
-    //             "Error can remain unhandled because we're not using streams, which are the try_clone fail condition",
-    //         ))
-    //         .await;
-
-    //     match &response {
-    //         Ok(response) => match response.status() {
-    //             StatusCode::NOT_FOUND => return Err(Error::NotFoundError),
-    //             StatusCode::UNAUTHORIZED => return Err(Error::AuthenticationError),
-    //             StatusCode::BAD_REQUEST => return Err(Error::InvalidRequestError),
-    //             _ => {}
-    //         },
-    //         Err(err) => {
-    //             if err.is_connect() || err.is_timeout() {
-    //                 return Err(Error::ApiConnectionError);
-    //             }
-    //         }
-    //     };
-
-    //     Ok(Response {
-    //         response: response?,
-    //         request,
-    //     })
-    // }
 }

@@ -218,13 +218,18 @@ pub struct CandlesResponse {
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Deserialize)]
+pub struct AccountResponse {
+    pub account: AccountObject,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Deserialize)]
 pub struct AccountsResponse {
-    pub account: AccountResponse,
+    pub accounts: Vec<AccountObject>,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct AccountResponse {
+pub struct AccountObject {
     pub stark_key: String,
     pub position_id: String,
     pub equity: String,
@@ -235,6 +240,11 @@ pub struct AccountResponse {
     pub account_number: String,
     pub id: String,
     pub quote_balance: String,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Deserialize)]
+pub struct PositionsResponse {
+    pub positions: Vec<PositionResponseObject>,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Deserialize)]

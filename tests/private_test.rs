@@ -21,6 +21,7 @@ speculate! {
                                 key: "ed85a071-c6b4-b4f1-c965-efb238d16c5e",
                                 secret: "1iDz27dyq4RspTkP-rfTcFN6ouxTgHmTT_sKJogU",
                                 passphrase: "CfbXaq6O-Yd3jKOqh10i"
+                                // passphrase: "CfbXaq6O-Yd3jKOqh10iaa"
                         };
                         let options: ClientOptions = ClientOptions {
                                 network_id: Some(3),
@@ -33,8 +34,8 @@ speculate! {
 
                 it "getClient" {
                         // dbg!(DydxClient().host);
-                        dbg!(DydxClient().network_id);
-                        dbg!(DydxClient().api_key_credentials);
+                        // dbg!(DydxClient().network_id);
+                        // dbg!(DydxClient().api_key_credentials);
                 }
 
                 it "getUserId" {
@@ -48,18 +49,45 @@ speculate! {
                 it "getAccount" {
                         b!(async {
                                 let response = DydxClient().private.unwrap().get_account("0x1e88f23864a8FE784eB152967AccDb394D3b88AD").await.unwrap();
-                                println!("{:?}", response);
+                                // println!("{:?}", response);
                                 // dbg!(response);
                         });
                 }
 
-                // it "get accounts test" {
+                // it "getAccountUnauthorized" {
                 //         b!(async {
-                //                 let response = DydxClient().private.get_accounts().await.unwrap();
-                //                 // DydxClient().private.sign();
-                //                 println!("{:?}", response);
+                //                 let response = DydxClient().private.unwrap().get_account("").await;
+                //                 match response {
+                //                         Ok(v) => println!("{:?}", v),
+                //                         Err(e) => println!("{:?}", e),
+                //                     }
+                //                 // println!("{:?}", response);
                 //                 // dbg!(response);
                 //         });
                 // }
+
+                it "getAccounts" {
+                        b!(async {
+                                let response = DydxClient().private.unwrap().get_accounts().await.unwrap();
+                                // println!("{:?}", response);
+                                // dbg!(response);
+                        });
+                }
+
+                // it "getPositionsWithNoParameters" {
+                //         b!(async {
+                //                 let response = DydxClient().private.unwrap().get_positions(None, None, None, None).await.unwrap();
+                //                 // println!("{:?}", response);
+                //                 // dbg!(response);
+                //         });
+                // }
+
+                it "getPositions" {
+                        b!(async {
+                                let response = DydxClient().private.unwrap().get_positions(None, None, Some("1"), None).await.unwrap();
+                                println!("{:?}", response);
+                                // dbg!(response);
+                        });
+                }
         }
 }

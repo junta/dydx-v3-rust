@@ -8,6 +8,7 @@ pub mod structs;
 
 pub use dydx_client::ClientOptions;
 pub use dydx_client::DydxClient;
+pub use error::Error;
 pub use private::Private;
 pub use public::Public;
 
