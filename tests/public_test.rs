@@ -21,6 +21,7 @@ speculate! {
                                 network_id: None,
                                 api_timeout: None,
                                 api_key_credentials: None,
+                                stark_private_key: None
                         };
                         DydxClient::new("https://api.dydx.exchange", options)
                     }

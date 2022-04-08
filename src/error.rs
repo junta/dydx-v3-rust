@@ -7,6 +7,7 @@ pub enum Error {
     NotFoundError,
     Reqwest(reqwest::Error),
     Json(serde_json::Error),
+    NoStarkKeyError,
 }
 
 impl From<reqwest::Error> for Error {
@@ -53,6 +54,13 @@ impl std::fmt::Display for Error {
 
             Error::Reqwest(_) | Error::Json(_) => {
                 write!(f, "{}", self)
+            }
+
+            Error::NoStarkKeyError => {
+                write!(
+                    f,
+                    "Order is not signed and client was not initialized with starkPrivateKey"
+                )
             }
         }
     }

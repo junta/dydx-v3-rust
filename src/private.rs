@@ -1,9 +1,9 @@
-use super::helper::get_account_id;
+use super::helper::*;
 pub use super::structs::*;
 use super::{Error, Result};
 use chrono::Utc;
 use hmac::{Hmac, Mac};
-use http::StatusCode;
+use http::{Method, StatusCode};
 use serde::Deserialize;
 use sha2::Sha256;
 use std::time::Duration;
@@ -13,6 +13,7 @@ pub struct Private<'a> {
     host: &'a str,
     network_id: usize,
     api_key_credentials: ApiKeyCredentials<'a>,
+    stark_private_key: Option<&'a str>,
 }
 
 impl Private<'_> {
@@ -20,6 +21,7 @@ impl Private<'_> {
         host: &'a str,
         network_id: usize,
         api_key_credentials: ApiKeyCredentials<'a>,
+        stark_private_key: Option<&'a str>,
     ) -> Private<'a> {
         Private {
             client: reqwest::ClientBuilder::new()
@@ -29,19 +31,50 @@ impl Private<'_> {
             host,
             network_id,
             api_key_credentials,
+            stark_private_key,
         }
     }
 
     pub async fn get_account(&self, ethereum_address: &str) -> Result<AccountResponse> {
         let account_id = get_account_id(ethereum_address);
         let path = format!("accounts/{}", account_id);
-        let response = self.get(path.as_str(), Vec::new()).await;
+        let response = self.request(path.as_str(), Method::GET, Vec::new()).await;
         response
     }
 
     pub async fn get_accounts(&self) -> Result<AccountsResponse> {
         let path = "accounts";
-        let response = self.get(path, Vec::new()).await;
+        let response = self.request(path, Method::GET, Vec::new()).await;
+        response
+    }
+
+    pub async fn create_order(
+        &self,
+        params: ApiOrder,
+        position_id: &str,
+    ) -> Result<AccountsResponse> {
+        let client_id = match params.client_id {
+            Some(v) => v,
+            None => generate_random_client_id(),
+        };
+
+        let signature: String;
+        match params.signature {
+            Some(v) => signature = v,
+            None => {
+                if let None = self.stark_private_key {
+                    return Err(Error::NoStarkKeyError);
+                }
+                // TODO: sign code
+                signature = String::from("aaaa");
+            }
+        }
+        let mut parameters = params.clone();
+        parameters.client_id = Some(client_id);
+        parameters.signature = Some(signature);
+
+        let path = "orders";
+        let response = self.request(path, Method::POST, parameters).await;
         response
     }
 
@@ -66,13 +99,14 @@ impl Private<'_> {
         if let Some(local_var) = created_before_or_at {
             parameters.push(("createdBeforeOrAt", local_var));
         }
-        let response = self.get(path, parameters).await;
+        let response = self.request(path, Method::GET, parameters).await;
         response
     }
 
-    pub async fn get<T: for<'de> Deserialize<'de>>(
+    pub async fn request<T: for<'de> Deserialize<'de>>(
         &self,
         path: &str,
+        method: Method,
         parameters: Vec<(&str, &str)>,
     ) -> Result<T> {
         let request_path = if parameters.len() == 0 {
@@ -87,11 +121,17 @@ impl Private<'_> {
 
         let signature = self.sign(request_path.as_str(), "GET", &iso_timestamp);
 
-        let url = format!("{}/v3/{}", &self.host, &path);
+        let url = format!("{}/v3/{}", &self.host, path);
 
-        let req_builder = self
-            .client
-            .get(url)
+        let req_builder = match method {
+            Method::GET => self.client.get(url),
+            Method::POST => self.client.post(url),
+            Method::PUT => self.client.put(url),
+            Method::DELETE => self.client.delete(url),
+            _ => self.client.get(url),
+        };
+
+        let req_builder = req_builder
             .header("DYDX-SIGNATURE", signature.as_str())
             .header("DYDX-TIMESTAMP", iso_timestamp.as_str())
             .header("DYDX-API-KEY", self.api_key_credentials.key)

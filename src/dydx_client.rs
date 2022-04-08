@@ -7,6 +7,7 @@ pub struct ClientOptions<'a> {
     pub network_id: Option<usize>,
     pub api_timeout: Option<usize>,
     pub api_key_credentials: Option<structs::ApiKeyCredentials<'a>>,
+    pub stark_private_key: Option<&'a str>,
 }
 
 #[readonly::make]
@@ -20,6 +21,7 @@ pub struct DydxClient<'a> {
     pub api_key_credentials: Option<structs::ApiKeyCredentials<'a>>,
     pub public: Public<'a>,
     pub private: Option<Private<'a>>,
+    // pub stark_private_key: Option<&'a str>,
 }
 
 impl DydxClient<'_> {
@@ -32,7 +34,12 @@ impl DydxClient<'_> {
             api_key_credentials: _options.api_key_credentials.clone(),
             public: Public::new(host),
             private: match _options.api_key_credentials {
-                Some(v) => Some(Private::new(host, network_id, v)),
+                Some(v) => Some(Private::new(
+                    host,
+                    network_id,
+                    v,
+                    _options.stark_private_key,
+                )),
                 None => None,
             },
         }

@@ -29,6 +29,7 @@ hmac = "0.12.1"
 chrono = "0.4"
 base64 = "0.13.0"
 readonly = "0.2.0"
+rand = "0.8.5"
 
 [dev-dependencies]
 speculate = "0.1.2"

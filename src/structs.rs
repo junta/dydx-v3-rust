@@ -7,6 +7,12 @@ pub struct ApiKeyCredentials<'a> {
     pub passphrase: &'a str,
 }
 
+// pub struct KeyPair<'a> {
+//     pub public_key: &'a str,
+//     pub public_key_ycoordinate: &'a str,
+//     pub private_key: &'a str,
+// }
+
 // #[non_exhaustive]
 // #[derive(Default, Debug, Clone, PartialEq, Deserialize)]
 // pub struct OrderSide;
@@ -339,4 +345,23 @@ pub struct PositionsMap {
     pub matic_usd: Option<PositionResponseObject>,
     #[serde(rename = "ENJ-USD")]
     pub enj_usd: Option<PositionResponseObject>,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Deserialize)]
+pub struct ApiOrder {
+    pub market: String,
+    pub side: String,
+    #[serde(rename = "type")]
+    pub type_field: String,
+    pub size: String,
+    pub price: String,
+    pub time_in_force: String,
+    pub post_only: String,
+    pub limit_fee: String,
+    pub client_id: Option<String>,
+    pub cancel_id: Option<String>,
+    pub trigger_price: Option<String>,
+    pub trailing_percent: Option<String>,
+    pub expiration: Option<String>,
+    pub signature: Option<String>,
 }
