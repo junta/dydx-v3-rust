@@ -75,13 +75,19 @@ impl Private<'_> {
         path: &str,
         parameters: Vec<(&str, &str)>,
     ) -> Result<T> {
-        let request_path = format!("/v3/{}", &path);
-        let request_path = format!("{}?limit=1", request_path);
-        let url = format!("{}/v3/{}", &self.host, &path);
+        let request_path = if parameters.len() == 0 {
+            format!("/v3/{}", &path)
+        } else {
+            let request_path = format!("/v3/{}", &path);
+            let dummy_url = reqwest::Url::parse_with_params("https://example.net", &parameters);
+            format!("{}?{}", request_path, dummy_url.unwrap().query().unwrap())
+        };
 
         let iso_timestamp = Utc::now().format("%Y-%m-%dT%H:%M:%S%.3fZ").to_string();
 
         let signature = self.sign(request_path.as_str(), "GET", &iso_timestamp);
+
+        let url = format!("{}/v3/{}", &self.host, &path);
 
         let req_builder = self
             .client

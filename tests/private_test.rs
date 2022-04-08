@@ -74,17 +74,17 @@ speculate! {
                         });
                 }
 
-                // it "getPositionsWithNoParameters" {
-                //         b!(async {
-                //                 let response = DydxClient().private.unwrap().get_positions(None, None, None, None).await.unwrap();
-                //                 // println!("{:?}", response);
-                //                 // dbg!(response);
-                //         });
-                // }
+                it "getPositionsWithNoParameters" {
+                        b!(async {
+                                let response = DydxClient().private.unwrap().get_positions(None, None, None, None).await.unwrap();
+                                // println!("{:?}", response);
+                                // dbg!(response);
+                        });
+                }
 
                 it "getPositions" {
                         b!(async {
-                                let response = DydxClient().private.unwrap().get_positions(None, None, Some("1"), None).await.unwrap();
+                                let response = DydxClient().private.unwrap().get_positions(Some(DydxMarket::BTC_USD), None, Some("1"), None).await.unwrap();
                                 println!("{:?}", response);
                                 // dbg!(response);
                         });
