@@ -28,6 +28,7 @@ sha2 = "0.10.2"
 hmac = "0.12.1"
 chrono = "0.4"
 base64 = "0.13.0"
+readonly = "0.2.0"
 
 [dev-dependencies]
 speculate = "0.1.2"

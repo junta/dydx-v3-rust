@@ -9,42 +9,32 @@ pub struct ClientOptions<'a> {
     pub api_key_credentials: Option<structs::ApiKeyCredentials<'a>>,
 }
 
+#[readonly::make]
 pub struct DydxClient<'a> {
+    #[readonly]
     pub host: &'a str,
+    #[readonly]
     pub network_id: usize,
+    #[readonly]
     pub api_timeout: Option<usize>,
     pub api_key_credentials: Option<structs::ApiKeyCredentials<'a>>,
     pub public: Public<'a>,
-    // pub private: Option<Private<'a>>,
-    pub private: Private<'a>,
+    pub private: Option<Private<'a>>,
 }
 
 impl DydxClient<'_> {
-    pub fn new<'a>(host: &'a str, _options: Option<ClientOptions<'a>>) -> DydxClient<'a> {
-        let api_key = structs::ApiKeyCredentials {
-            key: "ed85a071-c6b4-b4f1-c965-efb238d16c5e",
-            secret: "1iDz27dyq4RspTkP-rfTcFN6ouxTgHmTT_sKJogU",
-            passphrase: "CfbXaq6O-Yd3jKOqh10i",
-        };
-
-        let network_id = _options.unwrap().network_id.unwrap_or(1);
-        // let private = Private::new(host, &_options.unwrap().network_id.unwrap(), api_key);
-
+    pub fn new<'a>(host: &'a str, _options: ClientOptions<'a>) -> DydxClient<'a> {
+        let network_id = _options.network_id.unwrap_or(1);
         DydxClient {
             host,
             network_id,
-            // network_id: match &_options {
-            //     Some(v) => v.network_id.unwrap_or(1),
-            //     None => 1,
-            // },
             api_timeout: None,
-            // api_key_credentials: match _options {
-            //     Some(v) => Some(v.api_key_credentials).unwrap_or(None),
-            //     None => None,
-            // },
-            api_key_credentials: None,
+            api_key_credentials: _options.api_key_credentials.clone(),
             public: Public::new(host),
-            private: Private::new(host, network_id, api_key),
+            private: match _options.api_key_credentials {
+                Some(v) => Some(Private::new(host, network_id, v)),
+                None => None,
+            },
         }
     }
 }

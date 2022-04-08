@@ -16,19 +16,13 @@ use speculate::speculate;
 speculate! {
         describe "publicTest" {
                 fn DydxClient() -> DydxClient<'static> {
-                        let api_key = ApiKeyCredentials {
-                                // acount2 testnet
-                                key: "ed85a071-c6b4-b4f1-c965-efb238d16c5e",
-                                secret: "1iDz27dyq4RspTkP-rfTcFN6ouxTgHmTT_sKJogU",
-                                passphrase: "CfbXaq6O-Yd3jKOqh10i"
-                        };
+
                         let options: ClientOptions = ClientOptions {
-                                network_id: Some(1),
+                                network_id: None,
                                 api_timeout: None,
-                                api_key_credentials: Some(api_key),
+                                api_key_credentials: None,
                         };
-                        // DydxClient::new("https://api.dydx.exchange", Some(options))
-                        DydxClient::new("https://api.dydx.exchange", None)
+                        DydxClient::new("https://api.dydx.exchange", options)
                     }
 
                 it "getClient" {

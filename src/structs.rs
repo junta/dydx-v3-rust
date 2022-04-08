@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct ApiKeyCredentials<'a> {
     pub key: &'a str,
     pub secret: &'a str,

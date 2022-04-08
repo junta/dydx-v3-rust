@@ -28,8 +28,7 @@ speculate! {
                                 api_key_credentials: Some(api_key),
                         };
                         // DydxClient::new("https://api.dydx.exchange", Some(options))
-                        DydxClient::new("https://api.stage.dydx.exchange", Some(options))
-                        // DydxClient::new("https://api.dydx.exchange", None);
+                        DydxClient::new("https://api.stage.dydx.exchange", options)
                     }
 
                 it "getClient" {
@@ -48,7 +47,7 @@ speculate! {
 
                 it "getAccount" {
                         b!(async {
-                                let response = DydxClient().private.get_account("0x1e88f23864a8FE784eB152967AccDb394D3b88AD").await.unwrap();
+                                let response = DydxClient().private.unwrap().get_account("0x1e88f23864a8FE784eB152967AccDb394D3b88AD").await.unwrap();
                                 println!("{:?}", response);
                                 // dbg!(response);
                         });
