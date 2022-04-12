@@ -1,4 +1,5 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
+use serde_json::Value;
 
 #[derive(Debug, Clone, Copy)]
 pub struct ApiKeyCredentials<'a> {
@@ -347,7 +348,7 @@ pub struct PositionsMap {
     pub enj_usd: Option<PositionResponseObject>,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ApiOrder {
     pub market: String,
     pub side: String,
@@ -356,12 +357,89 @@ pub struct ApiOrder {
     pub size: String,
     pub price: String,
     pub time_in_force: String,
-    pub post_only: String,
+    pub post_only: bool,
     pub limit_fee: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub client_id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub cancel_id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub trigger_price: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub trailing_percent: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub expiration: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub signature: Option<String>,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct OrderResponse {
+    pub id: String,
+    pub client_id: Option<String>,
+    pub account_id: Option<String>,
+    pub market: String,
+    pub side: String,
+    pub price: String,
     pub trigger_price: Option<String>,
     pub trailing_percent: Option<String>,
-    pub expiration: Option<String>,
-    pub signature: Option<String>,
+    pub size: String,
+    pub remaining_size: String,
+    #[serde(rename = "type")]
+    pub type_field: String,
+    pub created_at: String,
+    pub unfillable_at: Option<String>,
+    pub expires_at: Option<String>,
+    pub status: String,
+    pub time_in_force: String,
+    pub post_only: bool,
+    pub cancel_reason: Option<String>,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct UserResponseObject {
+    pub public_id: String,
+    pub ethereum_address: String,
+    pub is_registered: bool,
+    pub email: Option<String>,
+    pub username: Option<String>,
+    pub user_data: Value,
+    pub maker_fee_rate: Option<String>,
+    pub taker_fee_rate: Option<String>,
+    pub maker_volume30_d: Option<String>,
+    pub taker_volume30_d: Option<String>,
+    pub fees30_d: Option<String>,
+    pub referred_by_affiliate_link: Option<String>,
+    pub is_sharing_username: Option<bool>,
+    pub is_sharing_address: Option<bool>,
+    pub dydx_token_balance: String,
+    pub staked_dydx_token_balance: String,
+    pub active_staked_dydx_token_balance: String,
+    pub is_email_verified: bool,
+    pub country: Option<String>,
+    pub hedgies_held: Vec<usize>,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct UserResponse {
+    pub user: UserResponseObject,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct UserParams<'a> {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub email: Option<&'a str>,
+    // pub user_data: Value,
+    pub user_data: &'a str,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub username: Option<&'a str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub is_sharing_username: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub is_sharing_address: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub country: Option<&'a str>,
 }

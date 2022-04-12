@@ -71,7 +71,7 @@ speculate! {
                         b!(async {
                                 let response = DydxClient().private.unwrap().get_accounts().await.unwrap();
                                 // println!("{:?}", response);
-                                // dbg!(response);
+                                dbg!(response);
                         });
                 }
 
@@ -100,9 +100,48 @@ speculate! {
 
                 it "createOrder" {
                         b!(async {
-                                let client_id = create_order();
+                                let order_params = ApiOrder {
+                                        market: String::from("BTC-USD"),
+                                        side: String::from("BUY"),
+                                        type_field: String::from("MARKET"),
+                                        size: String::from("0.01"),
+                                        price: String::from("100000"),
+                                        time_in_force: String::from("FOK"),
+                                        post_only: false,
+                                        limit_fee: String::from("0.06"),
+                                        client_id: None,
+                                        cancel_id: None,
+                                        trigger_price: None,
+                                        trailing_percent: None,
+                                        expiration: None,
+                                        signature: None
+                                };
+                                let client_id = DydxClient().private.unwrap().create_order(order_params, "60273").await.unwrap();
                                 dbg!(client_id);
                         });
                 }
+
+                it "updateUser" {
+                        b!(async {
+                                let userData = UserParams {
+                                        email: Some("eaee@example.com"),
+                                        user_data: "{}",
+                                        username: None,
+                                        is_sharing_username: None,
+                                        is_sharing_address: None,
+                                        country: None
+
+                                };
+                                let user = DydxClient().private.unwrap().update_user(userData).await.unwrap();
+                                dbg!(user);
+                        });
+                }
+
+                // it "sign" {
+                //         b!(async {
+                //                 let signed = DydxClient().private.unwrap().sign("/v3/users", "PUT", &String::from("2022-04-12T04:11:00.369Z"), Some(r#"{"email":"fff@example.com","userData":"{}"}"#));
+                //                 dbg!(signed);
+                //         });
+                // }
         }
 }
