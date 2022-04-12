@@ -4,8 +4,10 @@ use super::{Error, Result};
 use chrono::Utc;
 use hmac::{Hmac, Mac};
 use http::{Method, StatusCode};
+use reqwest::RequestBuilder;
 use serde::Deserialize;
 use serde::Serialize;
+use serde_json::*;
 use sha2::Sha256;
 use std::time::Duration;
 
@@ -39,19 +41,23 @@ impl Private<'_> {
     pub async fn get_account(&self, ethereum_address: &str) -> Result<AccountResponse> {
         let account_id = get_account_id(ethereum_address);
         let path = format!("accounts/{}", account_id);
-        let response = self.request(path.as_str(), Method::GET, Vec::new()).await;
+        let response = self
+            .request(path.as_str(), Method::GET, Vec::new(), json!({}))
+            .await;
         response
     }
 
     pub async fn get_accounts(&self) -> Result<AccountsResponse> {
         let path = "accounts";
-        let response = self.request(path, Method::GET, Vec::new()).await;
+        // let response = self.request(path, Method::GET, Vec::new()).await;
+        let response = self.request(path, Method::GET, Vec::new(), json!({})).await;
         response
     }
 
     pub async fn update_user(&self, data: UserParams<'_>) -> Result<UserResponse> {
         let path = "users";
-        let response = self.request_post(path, Method::PUT, data).await;
+        let response = self.request(path, Method::PUT, Vec::new(), data).await;
+        // let response = self.request_post(path, Method::PUT, data).await;
         response
     }
 
@@ -76,7 +82,7 @@ impl Private<'_> {
         if let Some(local_var) = created_before_or_at {
             parameters.push(("createdBeforeOrAt", local_var));
         }
-        let response = self.request(path, Method::GET, parameters).await;
+        let response = self.request(path, Method::GET, parameters, json!({})).await;
         response
     }
 
@@ -105,15 +111,26 @@ impl Private<'_> {
         let path = "orders";
         // let path = format!("{}?{}", path, new_params);
         // dbg!(&path);
-        let response = self.request_post(path, Method::POST, parameters).await;
+        let response = self
+            .request(path, Method::POST, Vec::new(), parameters)
+            .await;
         response
     }
 
-    pub async fn request<T: for<'de> Deserialize<'de>>(
+    pub async fn cancel_all_orders(&self, market: Option<&str>) -> Result<CancelOrderResponse> {
+        let path = "orders";
+        let response = self
+            .request(path, Method::DELETE, Vec::new(), json!({}))
+            .await;
+        response
+    }
+
+    async fn request<T: for<'de> Deserialize<'de>, V: Serialize>(
         &self,
         path: &str,
         method: Method,
         parameters: Vec<(&str, &str)>,
+        data: V,
     ) -> Result<T> {
         let request_path = if parameters.len() == 0 {
             format!("/v3/{}", &path)
@@ -123,60 +140,11 @@ impl Private<'_> {
             format!("{}?{}", request_path, dummy_url.unwrap().query().unwrap())
         };
 
-        let iso_timestamp = Utc::now().format("%Y-%m-%dT%H:%M:%S%.3fZ").to_string();
-
-        let signature = self.sign(request_path.as_str(), "GET", &iso_timestamp, None);
-
-        let url = format!("{}/v3/{}", &self.host, path);
-
-        let req_builder = match method {
-            Method::GET => self.client.get(url),
-            Method::POST => self.client.post(url),
-            Method::PUT => self.client.put(url),
-            Method::DELETE => self.client.delete(url),
-            _ => self.client.get(url),
-        };
-
-        let req_builder = req_builder
-            .header("DYDX-SIGNATURE", signature.as_str())
-            .header("DYDX-TIMESTAMP", iso_timestamp.as_str())
-            .header("DYDX-API-KEY", self.api_key_credentials.key)
-            .header("DYDX-PASSPHRASE", self.api_key_credentials.passphrase)
-            .query(&parameters);
-
-        let response = req_builder.send().await;
-
-        match response {
-            Ok(response) => match response.status() {
-                StatusCode::OK => return Ok(response.json::<T>().await?),
-                StatusCode::NOT_FOUND => return Err(Error::NotFoundError),
-                StatusCode::UNAUTHORIZED => return Err(Error::AuthenticationError),
-                StatusCode::BAD_REQUEST => return Err(Error::InvalidRequestError),
-                _ => {
-                    return Err(Error::InvalidRequestError);
-                }
-            },
-            Err(err) => {
-                // if err.is_connect() || err.is_timeout() {
-                return Err(Error::ApiConnectionError);
-                // }
-            }
-        };
-    }
-
-    pub async fn request_post<T: for<'de> Deserialize<'de>, V: Serialize>(
-        &self,
-        path: &str,
-        method: Method,
-        data: V,
-    ) -> Result<T> {
-        let request_path = format!("/v3/{}", &path);
-
         // let iso_timestamp = String::from("2022-04-12T03:29:57.239Z");
         let iso_timestamp = Utc::now().format("%Y-%m-%dT%H:%M:%S%.3fZ").to_string();
 
-        let json = serde_json::to_string(&data).unwrap();
-        let json_v = serde_json::to_value(&data).unwrap();
+        let json = to_string(&data).unwrap();
+        let json_v = to_value(&data).unwrap();
 
         let signature = self.sign(
             request_path.as_str(),
@@ -202,8 +170,13 @@ impl Private<'_> {
             .header("DYDX-TIMESTAMP", iso_timestamp.as_str())
             .header("DYDX-API-KEY", self.api_key_credentials.key)
             .header("DYDX-PASSPHRASE", self.api_key_credentials.passphrase)
-            .json(&json_v);
+            .query(&parameters);
 
+        let req_builder = if json != "{}" {
+            req_builder.json(&json_v)
+        } else {
+            req_builder
+        };
         let response = req_builder.send().await;
 
         match response {
@@ -232,7 +205,7 @@ impl Private<'_> {
         };
     }
 
-    pub fn sign(
+    fn sign(
         &self,
         request_path: &str,
         method: &str,
@@ -242,7 +215,9 @@ impl Private<'_> {
         let mut message = String::from(iso_timestamp) + method + request_path;
 
         if let Some(local_var) = data {
-            message.push_str(local_var);
+            if local_var != "{}" {
+                message.push_str(local_var);
+            }
         }
         println!("{}", &message);
 

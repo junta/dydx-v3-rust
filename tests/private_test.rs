@@ -98,37 +98,37 @@ speculate! {
                         });
                 }
 
-                it "createOrder" {
-                        b!(async {
-                                let order_params = ApiOrder {
-                                        market: String::from("BTC-USD"),
-                                        side: String::from("BUY"),
-                                        type_field: String::from("MARKET"),
-                                        size: String::from("0.01"),
-                                        price: String::from("100000"),
-                                        time_in_force: String::from("FOK"),
-                                        post_only: false,
-                                        limit_fee: String::from("0.06"),
-                                        client_id: None,
-                                        cancel_id: None,
-                                        trigger_price: None,
-                                        trailing_percent: None,
-                                        expiration: None,
-                                        signature: None
-                                };
-                                let client_id = DydxClient().private.unwrap().create_order(order_params, "60273").await.unwrap();
-                                dbg!(client_id);
-                        });
-                }
+                // it "createOrder" {
+                //         b!(async {
+                //                 let order_params = ApiOrder {
+                //                         market: String::from("BTC-USD"),
+                //                         side: String::from("BUY"),
+                //                         type_field: String::from("MARKET"),
+                //                         size: String::from("0.01"),
+                //                         price: String::from("100000"),
+                //                         time_in_force: String::from("FOK"),
+                //                         post_only: false,
+                //                         limit_fee: String::from("0.06"),
+                //                         client_id: None,
+                //                         cancel_id: None,
+                //                         trigger_price: None,
+                //                         trailing_percent: None,
+                //                         expiration: None,
+                //                         signature: None
+                //                 };
+                //                 let client_id = DydxClient().private.unwrap().create_order(order_params, "60273").await.unwrap();
+                //                 dbg!(client_id);
+                //         });
+                // }
 
                 it "updateUser" {
                         b!(async {
                                 let userData = UserParams {
-                                        email: Some("eaee@example.com"),
+                                        email: Some("eaese@example.com"),
                                         user_data: "{}",
                                         username: None,
                                         is_sharing_username: None,
-                                        is_sharing_address: None,
+                                        is_sharing_address: Some(true),
                                         country: None
 
                                 };
@@ -143,5 +143,13 @@ speculate! {
                 //                 dbg!(signed);
                 //         });
                 // }
+
+                it "cancelOrders" {
+                        b!(async {
+                                let response = DydxClient().private.unwrap().cancel_all_orders(None).await.unwrap();
+                                // println!("{:?}", response);
+                                dbg!(response);
+                        });
+                }
         }
 }

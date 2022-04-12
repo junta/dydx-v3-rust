@@ -397,6 +397,12 @@ pub struct OrderResponse {
     pub cancel_reason: Option<String>,
 }
 
+#[derive(Default, Debug, PartialEq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CancelOrderResponse {
+    pub cancel_orders: Vec<OrderResponse>,
+}
+
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct UserResponseObject {
@@ -432,14 +438,13 @@ pub struct UserResponse {
 pub struct UserParams<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub email: Option<&'a str>,
-    // pub user_data: Value,
-    pub user_data: &'a str,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub username: Option<&'a str>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub is_sharing_username: Option<bool>,
+    pub country: Option<&'a str>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub is_sharing_address: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub country: Option<&'a str>,
+    pub is_sharing_username: Option<bool>,
+    pub user_data: &'a str,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub username: Option<&'a str>,
 }
