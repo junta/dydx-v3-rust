@@ -8,8 +8,9 @@ pub mod structs;
 
 pub use dydx_client::ClientOptions;
 pub use dydx_client::DydxClient;
-pub use error::Error;
+pub use error::ResponseError;
 pub use private::Private;
 pub use public::Public;
 
-pub type Result<T> = std::result::Result<T, error::Error>;
+// pub type Result<T> = std::result::Result<T, error::Error>;
+pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;

@@ -1,6 +1,6 @@
 use super::helper::*;
 pub use super::structs::*;
-use super::{Error, Result};
+use super::{ResponseError, Result};
 use chrono::Utc;
 use hmac::{Hmac, Mac};
 use http::{Method, StatusCode};
@@ -98,9 +98,9 @@ impl Private<'_> {
         match params.signature {
             Some(v) => signature = v,
             None => {
-                if let None = self.stark_private_key {
-                    return Err(Error::NoStarkKeyError);
-                }
+                // if let None = self.stark_private_key {
+                //     return Err(Error::NoStarkKeyError);
+                // }
                 // TODO: sign code
                 signature = String::from("02c757ea45bf5232a1960335bb73e1d246d8205d3c7c12ddec392243667e199102d4ea763bf140fe7d2abb34cc8c44c67e2804761d2e5764d36a9a37546dc49f");
             }
@@ -117,6 +117,7 @@ impl Private<'_> {
         response
     }
 
+    // TODO: set parameter properly
     pub async fn cancel_all_orders(&self, market: Option<&str>) -> Result<CancelOrderResponse> {
         let path = "orders";
         let response = self
@@ -181,26 +182,20 @@ impl Private<'_> {
 
         match response {
             Ok(response) => match response.status() {
-                StatusCode::OK => return Ok(response.json::<T>().await?),
-                StatusCode::CREATED => {
-                    // dbg!(&response.text().await);
-                    return Ok(response.json::<T>().await?);
+                StatusCode::OK | StatusCode::CREATED => {
+                    return Ok(response.json::<T>().await.unwrap())
                 }
-                StatusCode::NOT_FOUND => return Err(Error::NotFoundError),
-                StatusCode::UNAUTHORIZED => {
-                    println!("{}", response.text().await?);
-                    return Err(Error::AuthenticationError);
-                }
-                StatusCode::BAD_REQUEST => return Err(Error::InvalidRequestError),
                 _ => {
-                    println!("{}", response.text().await?);
-                    return Err(Error::InvalidRequestError);
+                    // println!("{}", response.text().await.unwrap());
+                    let error = ResponseError {
+                        code: response.status().to_string(),
+                        message: response.text().await.unwrap(),
+                    };
+                    return Err(Box::new(error));
                 }
             },
             Err(err) => {
-                // if err.is_connect() || err.is_timeout() {
-                return Err(Error::ApiConnectionError);
-                // }
+                return Err(Box::new(err));
             }
         };
     }

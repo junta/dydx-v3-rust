@@ -55,17 +55,35 @@ speculate! {
                         });
                 }
 
-                // it "getAccountUnauthorized" {
-                //         b!(async {
-                //                 let response = DydxClient().private.unwrap().get_account("").await;
-                //                 match response {
-                //                         Ok(v) => println!("{:?}", v),
-                //                         Err(e) => println!("{:?}", e),
-                //                     }
-                //                 // println!("{:?}", response);
-                //                 // dbg!(response);
-                //         });
-                // }
+                it "getAccountUnauthorized" {
+                        b!(async {
+                                fn DydxClientNonAuth() -> DydxClient<'static> {
+                                        let api_key = ApiKeyCredentials {
+                                                // account2 testnet
+                                                key: "ed85a071-c6b4-b4f1-c965-efb238d16c5e",
+                                                secret: "1iDz27dyq4RspTkP-rfTcFN6ouxTgHmTT_sKJogU",
+                                                // passphrase: "CfbXaq6O-Yd3jKOqh10i"
+                                                passphrase: "CfbXaq6O-Yd3jKOqh10a"
+                                        };
+                                        let options = ClientOptions {
+                                                network_id: Some(3),
+                                                api_timeout: None,
+                                                api_key_credentials: Some(api_key),
+                                                stark_private_key: Some("0657eaa201ba872f72c0e6e2db278d8cda1b60de4313f02213aaf2b3421bff56")
+                                        };
+                                        // DydxClient::new("https://api.dydx.exchange", Some(options))
+                                        DydxClient::new("https://api.stage.dydx.exchange", options)
+                                    }
+
+                                let response = DydxClientNonAuth().private.unwrap().get_accounts().await;
+                                match response {
+                                        Ok(v) => println!("{:?}", v),
+                                        Err(e) => println!("{:?}", e),
+                                    }
+                                // println!("{:?}", response);
+                                // dbg!(response);
+                        });
+                }
 
                 it "getAccounts" {
                         b!(async {

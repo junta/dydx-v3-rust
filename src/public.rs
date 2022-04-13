@@ -1,4 +1,4 @@
-use super::{Error, Result};
+use super::{ResponseError, Result};
 use http::StatusCode;
 use serde::Deserialize;
 use std::time::Duration;
@@ -95,23 +95,24 @@ impl Public<'_> {
         // println!("{:?}", req_builder);
         let response = req_builder.send().await;
 
-        match &response {
+        match response {
             Ok(response) => match response.status() {
-                StatusCode::NOT_FOUND => return Err(Error::NotFoundError),
-                StatusCode::UNAUTHORIZED => return Err(Error::AuthenticationError),
-                StatusCode::BAD_REQUEST => return Err(Error::InvalidRequestError),
-                _ => {}
+                StatusCode::OK | StatusCode::CREATED => {
+                    return Ok(response.json::<T>().await.unwrap())
+                }
+                _ => {
+                    // println!("{}", response.text().await.unwrap());
+                    let error = ResponseError {
+                        code: response.status().to_string(),
+                        message: response.text().await.unwrap(),
+                    };
+                    return Err(Box::new(error));
+                }
             },
             Err(err) => {
-                if err.is_connect() || err.is_timeout() {
-                    return Err(Error::ApiConnectionError);
-                }
+                return Err(Box::new(err));
             }
         };
-
-        let result = response?.json::<T>().await?;
-
-        Ok(result)
     }
 
     pub async fn put(&self, path: &str, parameters: &[(&str, &str)]) -> Result<StatusCode> {
