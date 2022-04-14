@@ -27,7 +27,9 @@ speculate! {
                                 network_id: Some(3),
                                 api_timeout: None,
                                 api_key_credentials: Some(api_key),
-                                stark_private_key: Some("0657eaa201ba872f72c0e6e2db278d8cda1b60de4313f02213aaf2b3421bff56")
+                                stark_private_key: Some("0657eaa201ba872f72c0e6e2db278d8cda1b60de4313f02213aaf2b3421bff56"),
+                                web3: None,
+                                eth_private_key: None
                         };
                         // DydxClient::new("https://api.dydx.exchange", Some(options))
                         DydxClient::new("https://api.stage.dydx.exchange", options)
@@ -69,7 +71,9 @@ speculate! {
                                                 network_id: Some(3),
                                                 api_timeout: None,
                                                 api_key_credentials: Some(api_key),
-                                                stark_private_key: Some("0657eaa201ba872f72c0e6e2db278d8cda1b60de4313f02213aaf2b3421bff56")
+                                                stark_private_key: Some("0657eaa201ba872f72c0e6e2db278d8cda1b60de4313f02213aaf2b3421bff56"),
+                                                web3: None,
+                                                eth_private_key: None
                                         };
                                         // DydxClient::new("https://api.dydx.exchange", Some(options))
                                         DydxClient::new("https://api.stage.dydx.exchange", options)
