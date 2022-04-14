@@ -1,6 +1,6 @@
 pub use super::structs;
-use super::Private;
-use super::Public;
+use crate::modules::private::Private;
+use crate::modules::public::Public;
 
 // #[derive(Debug, Copy, Clone)]
 pub struct ClientOptions<'a> {

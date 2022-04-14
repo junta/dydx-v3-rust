@@ -1,9 +1,9 @@
-use super::{ResponseError, Result};
+use super::super::{ResponseError, Result};
 use http::StatusCode;
 use serde::Deserialize;
 use std::time::Duration;
 
-pub use super::structs;
+pub use super::super::structs;
 
 pub struct Public<'a> {
     client: reqwest::Client,
