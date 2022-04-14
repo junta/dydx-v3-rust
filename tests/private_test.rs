@@ -89,7 +89,8 @@ speculate! {
                         b!(async {
                                 let response = DydxClient().private.unwrap().get_accounts().await.unwrap();
                                 // println!("{:?}", response);
-                                dbg!(response);
+                                dbg!(&response);
+                                assert_eq!(response.accounts[0].position_id, "60273");
                         });
                 }
 
@@ -164,9 +165,8 @@ speculate! {
 
                 it "cancelOrders" {
                         b!(async {
-                                let response = DydxClient().private.unwrap().cancel_all_orders(None).await.unwrap();
+                                let response = DydxClient().private.unwrap().cancel_all_orders(Some(DydxMarket::BTC_USD)).await.unwrap();
                                 // println!("{:?}", response);
-                                dbg!(response);
                         });
                 }
         }

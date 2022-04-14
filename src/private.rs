@@ -120,8 +120,12 @@ impl Private<'_> {
     // TODO: set parameter properly
     pub async fn cancel_all_orders(&self, market: Option<&str>) -> Result<CancelOrderResponse> {
         let path = "orders";
+        let mut parameters = Vec::new();
+        if let Some(local_var) = market {
+            parameters.push(("market", local_var));
+        }
         let response = self
-            .request(path, Method::DELETE, Vec::new(), json!({}))
+            .request(path, Method::DELETE, parameters, json!({}))
             .await;
         response
     }
