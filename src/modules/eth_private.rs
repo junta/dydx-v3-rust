@@ -41,4 +41,77 @@ impl EthPrivate<'_> {
             sec_key: eth_private_key.parse().unwrap(),
         }
     }
+
+    pub async fn create_api_key(&self, ethereum_address: &str) -> Result<ApiKeyCredentials> {
+        let path = "api-keys";
+        let response = self
+            .request(path, Method::POST, ethereum_address, json!({}))
+            .await;
+        response
+    }
+
+    async fn request<T: for<'de> Deserialize<'de>, V: Serialize>(
+        &self,
+        path: &str,
+        method: Method,
+        ethereum_address: &str,
+        data: V,
+    ) -> Result<T> {
+        // let iso_timestamp = String::from("2022-04-12T03:29:57.239Z");
+        let iso_timestamp = Utc::now().format("%Y-%m-%dT%H:%M:%S%.3fZ").to_string();
+
+        let json = to_string(&data).unwrap();
+        let json_v = to_value(&data).unwrap();
+
+        // let signature = self.sign(
+        //     request_path.as_str(),
+        //     method.as_str(),
+        //     &iso_timestamp,
+        //     Some(json.as_str()),
+        // );
+
+        let signature = String::from("aaa");
+
+        dbg!(&signature);
+
+        let url = format!("{}/v3/{}", &self.host, path);
+
+        let req_builder = match method {
+            Method::GET => self.client.get(url),
+            Method::POST => self.client.post(url),
+            Method::DELETE => self.client.delete(url),
+            _ => self.client.get(url),
+        };
+
+        let req_builder = req_builder
+            .header("DYDX-SIGNATURE", signature.as_str())
+            .header("DYDX-TIMESTAMP", iso_timestamp.as_str())
+            .header("DYDX-ETHEREUM-ADDRESS", ethereum_address);
+
+        let req_builder = if json != "{}" {
+            req_builder.json(&json_v)
+        } else {
+            req_builder
+        };
+        let response = req_builder.send().await;
+
+        match response {
+            Ok(response) => match response.status() {
+                StatusCode::OK | StatusCode::CREATED => {
+                    return Ok(response.json::<T>().await.unwrap())
+                }
+                _ => {
+                    // println!("{}", response.text().await.unwrap());
+                    let error = ResponseError {
+                        code: response.status().to_string(),
+                        message: response.text().await.unwrap(),
+                    };
+                    return Err(Box::new(error));
+                }
+            },
+            Err(err) => {
+                return Err(Box::new(err));
+            }
+        };
+    }
 }

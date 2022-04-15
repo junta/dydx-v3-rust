@@ -31,8 +31,6 @@ speculate! {
                 it "getClient" {
                         // dbg!(DydxClient().host);
                         dbg!(DydxClient().network_id);
-                        dbg!(DydxClient().api_key_credentials);
-                        // dbg!(DydxClient().private.get_account("0x1e88f23864a8FE784eB152967AccDb394D3b88AD"));
                 }
                 it "getMarket" {
                         b!(async {

@@ -15,7 +15,7 @@ pub struct Private<'a> {
     client: reqwest::Client,
     host: &'a str,
     network_id: usize,
-    api_key_credentials: ApiKeyCredentials<'a>,
+    api_key_credentials: ApiKeyCredentials,
     stark_private_key: Option<&'a str>,
 }
 
@@ -23,7 +23,7 @@ impl Private<'_> {
     pub fn new<'a>(
         host: &'a str,
         network_id: usize,
-        api_key_credentials: ApiKeyCredentials<'a>,
+        api_key_credentials: ApiKeyCredentials,
         stark_private_key: Option<&'a str>,
     ) -> Private<'a> {
         Private {
@@ -49,7 +49,6 @@ impl Private<'_> {
 
     pub async fn get_accounts(&self) -> Result<AccountsResponse> {
         let path = "accounts";
-        // let response = self.request(path, Method::GET, Vec::new()).await;
         let response = self.request(path, Method::GET, Vec::new(), json!({})).await;
         response
     }
@@ -57,7 +56,6 @@ impl Private<'_> {
     pub async fn update_user(&self, data: UserParams<'_>) -> Result<UserResponse> {
         let path = "users";
         let response = self.request(path, Method::PUT, Vec::new(), data).await;
-        // let response = self.request_post(path, Method::PUT, data).await;
         response
     }
 
@@ -173,8 +171,11 @@ impl Private<'_> {
         let req_builder = req_builder
             .header("DYDX-SIGNATURE", signature.as_str())
             .header("DYDX-TIMESTAMP", iso_timestamp.as_str())
-            .header("DYDX-API-KEY", self.api_key_credentials.key)
-            .header("DYDX-PASSPHRASE", self.api_key_credentials.passphrase)
+            .header("DYDX-API-KEY", self.api_key_credentials.key.as_str())
+            .header(
+                "DYDX-PASSPHRASE",
+                self.api_key_credentials.passphrase.as_str(),
+            )
             .query(&parameters);
 
         let req_builder = if json != "{}" {
@@ -220,7 +221,7 @@ impl Private<'_> {
         }
         println!("{}", &message);
 
-        let secret = self.api_key_credentials.secret;
+        let secret = self.api_key_credentials.secret.as_str();
         let secret = base64::decode_config(secret, base64::URL_SAFE).unwrap();
 
         let mut mac = Hmac::<Sha256>::new_from_slice(&*secret).unwrap();

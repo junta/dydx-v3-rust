@@ -1,3 +1,5 @@
+use self::structs::ApiKeyCredentials;
+
 pub use super::structs;
 use crate::modules::eth_private::EthPrivate;
 use crate::modules::private::Private;
@@ -8,7 +10,7 @@ use web3::transports::Http;
 pub struct ClientOptions<'a> {
     pub network_id: Option<usize>,
     pub api_timeout: Option<usize>,
-    pub api_key_credentials: Option<structs::ApiKeyCredentials<'a>>,
+    pub api_key_credentials: Option<structs::ApiKeyCredentials>,
     pub stark_private_key: Option<&'a str>,
     pub web3: Option<web3::Web3<Http>>,
     pub eth_private_key: Option<String>,
@@ -22,7 +24,7 @@ pub struct DydxClient<'a> {
     pub network_id: usize,
     #[readonly]
     pub api_timeout: Option<usize>,
-    pub api_key_credentials: Option<structs::ApiKeyCredentials<'a>>,
+    // pub api_key_credentials: Option<structs::ApiKeyCredentials<'a>>,
     pub public: Public<'a>,
     pub private: Option<Private<'a>>,
     pub eth_private: Option<EthPrivate<'a>>,
@@ -36,7 +38,7 @@ impl DydxClient<'_> {
             host,
             network_id,
             api_timeout: None,
-            api_key_credentials: _options.api_key_credentials.clone(),
+            // api_key_credentials: _options.api_key_credentials.clone(),
             public: Public::new(host),
             private: match _options.api_key_credentials {
                 Some(v) => Some(Private::new(

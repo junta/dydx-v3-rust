@@ -18,10 +18,9 @@ speculate! {
                 fn DydxClient() -> DydxClient<'static> {
                         let api_key = ApiKeyCredentials {
                                 // account2 testnet
-                                key: "ed85a071-c6b4-b4f1-c965-efb238d16c5e",
-                                secret: "1iDz27dyq4RspTkP-rfTcFN6ouxTgHmTT_sKJogU",
-                                passphrase: "CfbXaq6O-Yd3jKOqh10i"
-                                // passphrase: "CfbXaq6O-Yd3jKOqh10iaa"
+                                key: String::from("ed85a071-c6b4-b4f1-c965-efb238d16c5e"),
+                                secret: String::from("1iDz27dyq4RspTkP-rfTcFN6ouxTgHmTT_sKJogU"),
+                                passphrase: String::from("CfbXaq6O-Yd3jKOqh10i")
                         };
                         let options = ClientOptions {
                                 network_id: Some(3),
@@ -62,10 +61,9 @@ speculate! {
                                 fn DydxClientNonAuth() -> DydxClient<'static> {
                                         let api_key = ApiKeyCredentials {
                                                 // account2 testnet
-                                                key: "ed85a071-c6b4-b4f1-c965-efb238d16c5e",
-                                                secret: "1iDz27dyq4RspTkP-rfTcFN6ouxTgHmTT_sKJogU",
-                                                // passphrase: "CfbXaq6O-Yd3jKOqh10i"
-                                                passphrase: "CfbXaq6O-Yd3jKOqh10a"
+                                                key: String::from("ed85a071-c6b4-b4f1-c965-efb238d16c5e"),
+                                                secret: String::from("1iDz27dyq4RspTkP-rfTcFN6ouxTgHmTT_sKJogU"),
+                                                passphrase: String::from("CfbXaq6O-Yd3jKOqh10a")
                                         };
                                         let options = ClientOptions {
                                                 network_id: Some(3),

@@ -1,12 +1,17 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-#[derive(Debug, Clone, Copy)]
-pub struct ApiKeyCredentials<'a> {
-    pub key: &'a str,
-    pub secret: &'a str,
-    pub passphrase: &'a str,
+#[derive(Debug, Deserialize)]
+pub struct ApiKeyCredentials {
+    pub key: String,
+    pub secret: String,
+    pub passphrase: String,
 }
+// pub struct ApiKeyCredentials<'a> {
+//     pub key: &'a str,
+//     pub secret: &'a str,
+//     pub passphrase: &'a str,
+// }
 
 // pub struct KeyPair<'a> {
 //     pub public_key: &'a str,
