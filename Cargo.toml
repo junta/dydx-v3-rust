@@ -32,6 +32,8 @@ readonly = "0.2.0"
 rand = "0.8.5"
 secp256k1 = "0.22.1"
 dotenv = "0.15.0"
+rust-crypto = "0.2.36"
+# eip-712 = "0.1.0"
 
 [dev-dependencies]
 speculate = "0.1.2"
