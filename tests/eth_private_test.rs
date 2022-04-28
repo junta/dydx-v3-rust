@@ -45,9 +45,9 @@ speculate! {
                                 // accounts.unwrap().push("00a329c0648769a73afac7f9381e08fb43dbea72".parse().unwrap());
                                 let input_a = b"POST";
                                 let sign = dydx_v3_rust::SignEthPrivateAction {
-                                        network_id: "3"
+                                        network_id: "1"
                                 };
-                                sign.getHash("POST");
+                                sign.getHash("POST", "/v3/api-keys", "{}", "2022-04-28T03:25:00.258Z");
                         });
                 }
 
