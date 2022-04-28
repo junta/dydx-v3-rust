@@ -2,11 +2,12 @@ use self::structs::ApiKeyCredentials;
 
 pub use super::structs;
 use crate::modules::eth_private::EthPrivate;
+use crate::modules::onboarding::Onboarding;
 use crate::modules::private::Private;
 use crate::modules::public::Public;
 use web3::transports::Http;
 
-// #[derive(Debug, Copy, Clone)]
+#[derive(Debug)]
 pub struct ClientOptions<'a> {
     pub network_id: Option<usize>,
     pub api_timeout: Option<usize>,
@@ -28,6 +29,7 @@ pub struct DydxClient<'a> {
     pub public: Public<'a>,
     pub private: Option<Private<'a>>,
     pub eth_private: Option<EthPrivate<'a>>,
+    pub onboarding: Option<Onboarding<'a>>,
     // pub stark_private_key: Option<&'a str>,
 }
 
@@ -58,6 +60,12 @@ impl DydxClient<'_> {
                 )),
                 None => None,
             },
+            // onboarding: match _options.eth_private_key {
+            //     Some(_r) => Some(Onboarding::new(host, network_id)),
+            //     None => None,
+            // },
+            // TODO: should be change properly
+            onboarding: Some(Onboarding::new(host, network_id)),
         }
     }
 }

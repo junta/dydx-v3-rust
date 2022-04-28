@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct ApiKeyCredentials {
     pub key: String,
     pub secret: String,
@@ -452,4 +452,15 @@ pub struct UserParams<'a> {
     pub user_data: &'a str,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub username: Option<&'a str>,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CreateUserParams<'a> {
+    pub stark_key: &'a str,
+    pub stark_key_y_coordinate: &'a str,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub referred_by_affiliate_link: Option<&'a str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub country: Option<&'a str>,
 }

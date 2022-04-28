@@ -18,7 +18,7 @@ use std::str::FromStr;
 use speculate::speculate;
 
 speculate! {
-        describe "ethPrivateTest" {
+        describe "onboardingTest" {
                 fn DydxClient() -> DydxClient<'static> {
                         dotenv().ok();
                         let transport = web3::transports::Http::new("https://mainnet.infura.io/v3/ce7426bf07f24fd59a2f7bbb6df217b4").unwrap();
@@ -37,28 +37,31 @@ speculate! {
 
                 }
 
-                it "getEthPrivate" {
+                it "getOnboarding" {
                         b!(async {
-
-
-                                // accounts.unwrap().push("00a329c0648769a73afac7f9381e08fb43dbea72".parse().unwrap());
-                                let input_a = b"POST";
-                                let sign = dydx_v3_rust::SignEthPrivateAction {
+                                let sign = dydx_v3_rust::OnboardingAction {
                                         network_id: "1"
                                 };
-                                let hash = sign.getHash("POST", "/v3/api-keys", "{}", "2022-04-28T03:25:00.258Z");
-                                sign.sign().await;
+
                                 // dbg!(signature);
                         });
                 }
-
-                it "createApiKey" {
+                it "createUser" {
                         b!(async {
-                                let response = DydxClient().eth_private.unwrap().create_api_key("0x1e88f23864a8FE784eB152967AccDb394D3b88AD").await;
+                                let userData = CreateUserParams {
+                                        stark_key:"0474df88a6f75dcce483a85d1cdd60034c820736a44cde52005610844fa2d2c7",
+                                        stark_key_y_coordinate: "0276f9cc8377c22e272ab3147fc7bdc339ce087259bcfdd153c4d5f356783a4f",
+                                        referred_by_affiliate_link: None,
+                                        country: None
+
+                                };
+
+                                let response = DydxClient().onboarding.unwrap().create_user(userData ,"0x1e88f23864a8FE784eB152967AccDb394D3b88AD").await;
                                 dbg!(&response);
 
                         });
                 }
+
         }
 
 }
