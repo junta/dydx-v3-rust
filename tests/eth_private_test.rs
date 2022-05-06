@@ -10,7 +10,7 @@ use dydx_v3_rust::structs::*;
 use dydx_v3_rust::ClientOptions;
 #[cfg(test)]
 use dydx_v3_rust::DydxClient;
-use secp256k1::SecretKey;
+// use secp256k1::SecretKey;
 use std::env;
 use std::str::FromStr;
 
@@ -42,11 +42,11 @@ speculate! {
 
 
                                 // accounts.unwrap().push("00a329c0648769a73afac7f9381e08fb43dbea72".parse().unwrap());
-                                let input_a = b"POST";
                                 let sign = dydx_v3_rust::SignEthPrivateAction {
-                                        network_id: "1"
+                                        network_id: 1,
+                                        private_key: String::from("ec23b028575e0a3d4bc2d64efbbd4dc149a96d068a04c4088d7ec9f0561870a5")
                                 };
-                                let hash = sign.getHash("POST", "/v3/api-keys", "{}", "2022-04-28T03:25:00.258Z");
+                                let hash = sign.getHash("POST", "/v3/api-keys", "{}", "2022-04-28T14:30:42.497Z");
                                 sign.sign().await;
                                 // dbg!(signature);
                         });

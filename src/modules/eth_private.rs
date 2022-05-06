@@ -1,3 +1,5 @@
+use crate::SignEthPrivateAction;
+
 use super::super::helper::*;
 pub use super::super::structs::*;
 use super::super::{ResponseError, Result};
@@ -20,7 +22,8 @@ pub struct EthPrivate<'a> {
     network_id: usize,
     // TODO: should accept IPC, WS
     web3: web3::Web3<Http>,
-    sec_key: secp256k1::SecretKey,
+    // sec_key: secp256k1::SecretKey,
+    signer: SignEthPrivateAction,
 }
 
 impl EthPrivate<'_> {
@@ -28,7 +31,7 @@ impl EthPrivate<'_> {
         host: &'a str,
         network_id: usize,
         web3: web3::Web3<Http>,
-        eth_private_key: String,
+        eth_private_key: &String,
     ) -> EthPrivate<'a> {
         EthPrivate {
             client: reqwest::ClientBuilder::new()
@@ -38,7 +41,8 @@ impl EthPrivate<'_> {
             host,
             network_id,
             web3,
-            sec_key: eth_private_key.parse().unwrap(),
+            signer: SignEthPrivateAction::new(network_id, eth_private_key.to_string()),
+            // sec_key: eth_private_key.parse().unwrap(),
         }
     }
 
@@ -46,6 +50,18 @@ impl EthPrivate<'_> {
         let path = "api-keys";
         let response = self
             .request(path, Method::POST, ethereum_address, json!({}))
+            .await;
+        response
+    }
+
+    pub async fn delete_api_key(
+        &self,
+        api_key: &str,
+        ethereum_address: &str,
+    ) -> Result<ApiKeyCredentials> {
+        let path = "api-keys";
+        let response = self
+            .request(path, Method::DELETE, ethereum_address, api_key)
             .await;
         response
     }
@@ -69,6 +85,8 @@ impl EthPrivate<'_> {
         //     &iso_timestamp,
         //     Some(json.as_str()),
         // );
+
+        let signature = self.signer.sign();
 
         let signature = String::from("aaa");
 

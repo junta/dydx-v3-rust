@@ -56,16 +56,14 @@ impl DydxClient<'_> {
                     host,
                     network_id,
                     v,
-                    _options.eth_private_key.unwrap(),
+                    _options.eth_private_key.as_ref().unwrap(),
                 )),
                 None => None,
             },
-            // onboarding: match _options.eth_private_key {
-            //     Some(_r) => Some(Onboarding::new(host, network_id)),
-            //     None => None,
-            // },
-            // TODO: should be change properly
-            onboarding: Some(Onboarding::new(host, network_id)),
+            onboarding: match _options.eth_private_key {
+                Some(r) => Some(Onboarding::new(host, network_id)),
+                None => None,
+            },
         }
     }
 }

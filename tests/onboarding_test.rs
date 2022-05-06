@@ -10,7 +10,7 @@ use dydx_v3_rust::structs::*;
 use dydx_v3_rust::ClientOptions;
 #[cfg(test)]
 use dydx_v3_rust::DydxClient;
-use secp256k1::SecretKey;
+// use secp256k1::SecretKey;
 use std::env;
 use std::str::FromStr;
 
