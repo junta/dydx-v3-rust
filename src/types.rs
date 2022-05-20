@@ -31,6 +31,27 @@ impl OrderSide {
     pub const SELL: &'static str = "SELL";
 }
 
+#[non_exhaustive]
+#[derive(Debug, Clone, Deserialize)]
+pub struct OrderType;
+
+impl OrderType {
+    pub const MARKET: &'static str = "MARKET";
+    pub const LIMIT: &'static str = "LIMIT";
+    pub const STOP_LIMIT: &'static str = "STOP_LIMIT";
+    pub const TRAILING_STOP: &'static str = "TRAILING_STOP";
+    pub const TAKE_PROFIT: &'static str = "TAKE_PROFIT";
+}
+
+#[non_exhaustive]
+#[derive(Debug, Clone, Deserialize)]
+pub struct TimeInForce;
+impl TimeInForce {
+    pub const GTT: &'static str = "GTT";
+    pub const FOK: &'static str = "FOK";
+    pub const IOC: &'static str = "IOC";
+}
+
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct MarketStatsResponse {
@@ -478,7 +499,7 @@ pub struct ApiOrder<'a> {
 
 #[derive(Debug, Clone, Serialize)]
 pub struct ApiOrderParams<'a> {
-    pub position_id: usize,
+    pub position_id: &'a str,
     pub market: &'a str,
     pub side: &'a str,
     #[serde(rename = "type")]
@@ -494,12 +515,18 @@ pub struct ApiOrderParams<'a> {
     pub trigger_price: Option<&'a str>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub trailing_percent: Option<&'a str>,
-    pub expiration: &'a str,
+    pub expiration: i64,
 }
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct OrderResponse {
+    pub order: OrderResponseObject,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct OrderResponseObject {
     pub id: String,
     pub client_id: Option<String>,
     pub account_id: Option<String>,

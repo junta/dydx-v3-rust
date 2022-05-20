@@ -104,8 +104,6 @@ impl Private<'_> {
 
     pub async fn create_order(&self, user_params: ApiOrderParams<'_>) -> Result<OrderResponse> {
         let client_id = generate_random_client_id();
-        // let client_id = String::from("15012769582582997");
-        // let private_key = "58c7d5a90b1776bde86ebac077e053ed85b0f7164f53b080304a531947f46e3";
 
         let signature = sign_order(
             self.network_id,
@@ -120,14 +118,10 @@ impl Private<'_> {
             self.stark_private_key.unwrap(),
         )
         .unwrap();
-        dbg!(&signature);
-        // signature = String::from("02c757ea45bf5232a1960335bb73e1d246d8205d3c7c12ddec392243667e199102d4ea763bf140fe7d2abb34cc8c44c67e2804761d2e5764d36a9a37546dc49f");
 
-        let parsed_expiration = user_params.expiration.parse::<i64>().unwrap();
-        let naive = NaiveDateTime::from_timestamp(parsed_expiration, 0);
+        let naive = NaiveDateTime::from_timestamp(user_params.expiration, 0);
         let datetime: DateTime<Utc> = DateTime::from_utc(naive, Utc);
         let expiration_second = datetime.format("%Y-%m-%dT%H:%M:%S%.3fZ").to_string();
-        dbg!(&expiration_second);
 
         let parameters = ApiOrder {
             market: user_params.market,
@@ -146,8 +140,6 @@ impl Private<'_> {
             signature: signature.as_str(),
         };
 
-        // let path = format!("{}?{}", path, new_params);
-        // dbg!(&path);
         let response = self
             .request("orders", Method::POST, Vec::new(), parameters)
             .await;
@@ -206,12 +198,8 @@ impl Private<'_> {
             format!("{}?{}", request_path, dummy_url.unwrap().query().unwrap())
         };
 
-        // let iso_timestamp = String::from("2022-05-19T02:46:22.071Z");
         let iso_timestamp = Utc::now().format("%Y-%m-%dT%H:%M:%S%.3fZ").to_string();
-
         let json = to_string(&data).unwrap();
-        let json_v = to_value(&data).unwrap();
-        dbg!(&json_v);
 
         let signature = self.sign(
             request_path.as_str(),
@@ -219,8 +207,6 @@ impl Private<'_> {
             &iso_timestamp,
             Some(json.as_str()),
         );
-
-        dbg!(&signature);
 
         let url = format!("{}/v3/{}", &self.host, path);
 
@@ -232,8 +218,6 @@ impl Private<'_> {
             _ => self.client.get(url),
         };
 
-        dbg!(&json_v);
-
         let req_builder = req_builder
             .header("DYDX-SIGNATURE", signature.as_str())
             .header("DYDX-TIMESTAMP", iso_timestamp.as_str())
@@ -242,11 +226,10 @@ impl Private<'_> {
             .query(&parameters);
 
         let req_builder = if json != "{}" {
-            req_builder.json(&json_v)
+            req_builder.json(&data)
         } else {
             req_builder
         };
-        dbg!(&req_builder);
         let response = req_builder.send().await;
 
         match response {
@@ -283,7 +266,7 @@ impl Private<'_> {
                 message.push_str(local_var);
             }
         }
-        println!("{}", &message);
+        // println!("{}", &message);
 
         let secret = self.api_key_credentials.secret;
         let secret = base64::decode_config(secret, base64::URL_SAFE).unwrap();

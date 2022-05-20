@@ -4,12 +4,12 @@ macro_rules! b {
         };
 }
 
+use chrono::{DateTime, Duration, Utc};
 use dydx_v3_rust::helper::*;
 use dydx_v3_rust::types::*;
 use dydx_v3_rust::ClientOptions;
 #[cfg(test)]
 use dydx_v3_rust::DydxClient;
-
 // use serde_json::json;
 use speculate::speculate;
 
@@ -115,27 +115,31 @@ speculate! {
                         });
                 }
 
-                // it "createOrder" {
-                //         b!(async {
-                //                 let order_params = ApiOrderParams {
-                //                         position_id: 62392,
-                //                         market: "BTC-USD",
-                //                         side: "BUY",
-                //                         type_field: "MARKET",
-                //                         time_in_force: "FOK",
-                //                         post_only: false,
-                //                         size: "0.01",
-                //                         price: "100000",
-                //                         limit_fee: "0.06",
-                //                         cancel_id: None,
-                //                         trigger_price: None,
-                //                         trailing_percent: None,
-                //                         expiration: "1656633600",
-                //                 };
-                //                 let order = DydxClient().private.unwrap().create_order(order_params).await.unwrap();
-                //                 dbg!(order);
-                //         });
-                // }
+                it "createOrder" {
+                        b!(async {
+                                let datetime_now: DateTime<Utc> = Utc::now();
+                                let expiration = datetime_now + Duration::minutes(3);
+                                let expiration_unix = expiration.timestamp();
+
+                                let order_params = ApiOrderParams {
+                                        position_id: "62392",
+                                        market: DydxMarket::BTC_USD,
+                                        side: OrderSide::BUY,
+                                        type_field: OrderType::MARKET,
+                                        time_in_force: TimeInForce::FOK,
+                                        post_only: false,
+                                        size: "0.01",
+                                        price: "100000",
+                                        limit_fee: "0.1",
+                                        cancel_id: None,
+                                        trigger_price: None,
+                                        trailing_percent: None,
+                                        expiration: expiration_unix,
+                                };
+                                let order = DydxClient().private.unwrap().create_order(order_params).await.unwrap();
+                                dbg!(order);
+                        });
+                }
 
                 it "updateUser" {
                         b!(async {
@@ -153,14 +157,14 @@ speculate! {
                         });
                 }
 
-                // it "createAccount" {
-                //         b!(async {
-                //                 let test_stark_public_key = "0084868a931891833df41ff83980f79889a045a46bbd273ec60ff402d7a1293f";
-                //                 let test_stark_public_key_y_coordinate = "024b4de622d8acc9198800f5607c4a25968425fe268afe0272dbd3d5e119407d";
-                //                 let response = DydxClient().private.unwrap().create_account(test_stark_public_key, test_stark_public_key_y_coordinate).await.unwrap();
-                //                 // println!("{:?}", response);
-                //         });
-                // }
+                it "createAccount" {
+                        b!(async {
+                                let test_stark_public_key = "0084868a931891833df41ff83980f79889a045a46bbd273ec60ff402d7a1293f";
+                                let test_stark_public_key_y_coordinate = "024b4de622d8acc9198800f5607c4a25968425fe268afe0272dbd3d5e119407d";
+                                let response = DydxClient().private.unwrap().create_account(test_stark_public_key, test_stark_public_key_y_coordinate).await.unwrap();
+                                // println!("{:?}", response);
+                        });
+                }
 
                 // it "sign" {
                 //         b!(async {

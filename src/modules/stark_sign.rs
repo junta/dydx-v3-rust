@@ -7,12 +7,13 @@ pub fn sign_order(
     network_id: usize,
     market: &str,
     side: &str,
-    position_id: usize,
+    position_id: &str,
     human_size: &str,
     human_price: &str,
     limit_fee: &str,
     client_id: &str,
-    expiration_epoch_seconds: &str,
+    // expiration_epoch_seconds: &str,
+    expiration_epoch_seconds: i64,
     private_key: &str,
 ) -> PyResult<String> {
     let path = Path::new("./src/stark");
