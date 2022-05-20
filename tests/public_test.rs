@@ -165,7 +165,7 @@ speculate! {
 
                 it "getProfile" {
                         b!(async {
-                                let response = DydxClient().public.get_profile("aaaa").await.unwrap();
+                                let response = DydxClient().public.get_profile("SIFTBRXH").await.unwrap();
                                 dbg!(response);
                         });
                 }

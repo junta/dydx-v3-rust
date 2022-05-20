@@ -61,7 +61,6 @@ pub struct MarketStats {
 }
 
 #[derive(Default, Debug, Deserialize)]
-#[non_exhaustive]
 pub struct MarketStatisticDay;
 impl MarketStatisticDay {
     pub const ONE: &'static str = "1";
@@ -219,6 +218,30 @@ pub struct InsuranceFundBalanceResponse {
 #[serde(rename_all = "camelCase")]
 pub struct ProfilePublicResponse {
     pub username: String,
+    pub ethereum_address: String,
+    #[serde(rename = "DYDXHoldings")]
+    pub dydx_holdings: String,
+    #[serde(rename = "stakedDYDXHoldings")]
+    pub staked_dydx_holdings: String,
+    pub hedgies_held: Vec<u16>,
+    pub twitter_handle: String,
+    pub trading_leagues: TradingLeagues,
+    pub trading_pnls: TradingPnls,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TradingLeagues {
+    pub current_league: Option<String>,
+    pub current_league_ranking: Option<u32>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TradingPnls {
+    pub absolute_pnl30_d: Option<String>,
+    pub percent_pnl30_d: Option<String>,
+    pub volume30_d: String,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -228,7 +251,6 @@ pub struct MarketsResponse {
 }
 
 #[derive(Default, Debug, Deserialize)]
-#[non_exhaustive]
 pub struct CandleResolution;
 impl CandleResolution {
     pub const ONE_DAY: &'static str = "1DAY";
@@ -382,7 +404,7 @@ pub struct AccountObject {
     pub free_collateral: String,
     pub pending_deposits: String,
     pub pending_withdrawals: String,
-    pub open_positions: PositionsMap,
+    pub open_positions: HashMap<String, PositionResponseObject>,
     pub account_number: String,
     pub id: String,
     pub quote_balance: String,
@@ -412,73 +434,6 @@ pub struct PositionResponseObject {
     pub sum_open: Option<String>,
     pub sum_close: Option<String>,
     pub net_funding: Option<String>,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct PositionsMap {
-    #[serde(rename = "BTC-USD")]
-    pub btc_usd: Option<PositionResponseObject>,
-    #[serde(rename = "SUSHI-USD")]
-    pub sushi_usd: Option<PositionResponseObject>,
-    #[serde(rename = "AVAX-USD")]
-    pub avax_usd: Option<PositionResponseObject>,
-    #[serde(rename = "1INCH-USD")]
-    pub inch_usd: Option<PositionResponseObject>,
-    #[serde(rename = "ETH-USD")]
-    pub eth_usd: Option<PositionResponseObject>,
-    #[serde(rename = "XMR-USD")]
-    pub xmr_usd: Option<PositionResponseObject>,
-    #[serde(rename = "COMP-USD")]
-    pub comp_usd: Option<PositionResponseObject>,
-    #[serde(rename = "ALGO-USD")]
-    pub algo_usd: Option<PositionResponseObject>,
-    #[serde(rename = "BCH-USD")]
-    pub bch_usd: Option<PositionResponseObject>,
-    #[serde(rename = "CRV-USD")]
-    pub crv_usd: Option<PositionResponseObject>,
-    #[serde(rename = "ETC-USD")]
-    pub etc_usd: Option<PositionResponseObject>,
-    #[serde(rename = "UNI-USD")]
-    pub uni_usd: Option<PositionResponseObject>,
-    #[serde(rename = "MKR-USD")]
-    pub mkr_usd: Option<PositionResponseObject>,
-    #[serde(rename = "LTC-USD")]
-    pub ltc_usd: Option<PositionResponseObject>,
-    #[serde(rename = "EOS-USD")]
-    pub eos_usd: Option<PositionResponseObject>,
-    #[serde(rename = "DOGE-USD")]
-    pub doge_usd: Option<PositionResponseObject>,
-    #[serde(rename = "ATOM-USD")]
-    pub atom_usd: Option<PositionResponseObject>,
-    #[serde(rename = "ZRX-USD")]
-    pub zrx_usd: Option<PositionResponseObject>,
-    #[serde(rename = "SOL-USD")]
-    pub sol_usd: Option<PositionResponseObject>,
-    #[serde(rename = "UMA-USD")]
-    pub uma_usd: Option<PositionResponseObject>,
-    #[serde(rename = "AAVE-USD")]
-    pub aave_usd: Option<PositionResponseObject>,
-    #[serde(rename = "ADA-USD")]
-    pub ada_usd: Option<PositionResponseObject>,
-    #[serde(rename = "SNX-USD")]
-    pub snx_usd: Option<PositionResponseObject>,
-    #[serde(rename = "FIL-USD")]
-    pub fil_usd: Option<PositionResponseObject>,
-    #[serde(rename = "ZEC-USD")]
-    pub zec_usd: Option<PositionResponseObject>,
-    #[serde(rename = "YFI-USD")]
-    pub yfi_usd: Option<PositionResponseObject>,
-    #[serde(rename = "XLM-USD")]
-    pub xlm_usd: Option<PositionResponseObject>,
-    #[serde(rename = "LINK-USD")]
-    pub link_usd: Option<PositionResponseObject>,
-    #[serde(rename = "DOT-USD")]
-    pub dot_usd: Option<PositionResponseObject>,
-    #[serde(rename = "MATIC-USD")]
-    pub matic_usd: Option<PositionResponseObject>,
-    #[serde(rename = "ENJ-USD")]
-    pub enj_usd: Option<PositionResponseObject>,
 }
 
 #[derive(Debug, Clone, Serialize)]
