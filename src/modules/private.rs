@@ -1,5 +1,5 @@
 use super::super::helper::*;
-use super::super::structs::*;
+use super::super::types::*;
 use super::super::{ResponseError, Result};
 use super::stark_sign::*;
 use chrono::prelude::*;
@@ -16,7 +16,7 @@ pub struct Private<'a> {
     client: reqwest::Client,
     host: &'a str,
     network_id: usize,
-    api_key_credentials: ApiKeyCredentials,
+    api_key_credentials: ApiKeyCredentials<'a>,
     stark_private_key: Option<&'a str>,
 }
 
@@ -24,7 +24,7 @@ impl Private<'_> {
     pub fn new<'a>(
         host: &'a str,
         network_id: usize,
-        api_key_credentials: ApiKeyCredentials,
+        api_key_credentials: ApiKeyCredentials<'a>,
         stark_private_key: Option<&'a str>,
     ) -> Private<'a> {
         Private {
@@ -237,11 +237,8 @@ impl Private<'_> {
         let req_builder = req_builder
             .header("DYDX-SIGNATURE", signature.as_str())
             .header("DYDX-TIMESTAMP", iso_timestamp.as_str())
-            .header("DYDX-API-KEY", self.api_key_credentials.key.as_str())
-            .header(
-                "DYDX-PASSPHRASE",
-                self.api_key_credentials.passphrase.as_str(),
-            )
+            .header("DYDX-API-KEY", self.api_key_credentials.key)
+            .header("DYDX-PASSPHRASE", self.api_key_credentials.passphrase)
             .query(&parameters);
 
         let req_builder = if json != "{}" {
@@ -288,7 +285,7 @@ impl Private<'_> {
         }
         println!("{}", &message);
 
-        let secret = self.api_key_credentials.secret.as_str();
+        let secret = self.api_key_credentials.secret;
         let secret = base64::decode_config(secret, base64::URL_SAFE).unwrap();
 
         let mut mac = Hmac::<Sha256>::new_from_slice(&*secret).unwrap();

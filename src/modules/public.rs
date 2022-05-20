@@ -3,7 +3,7 @@ use http::StatusCode;
 use serde::Deserialize;
 use std::time::Duration;
 
-pub use super::super::structs::*;
+pub use super::super::types::*;
 
 pub struct Public<'a> {
     client: reqwest::Client,

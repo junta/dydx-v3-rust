@@ -1,6 +1,6 @@
-use self::structs::ApiKeyCredentials;
+use self::types::ApiKeyCredentials;
 
-pub use super::structs;
+pub use super::types;
 use crate::modules::eth_private::EthPrivate;
 use crate::modules::onboarding::Onboarding;
 use crate::modules::private::Private;
@@ -11,7 +11,7 @@ use web3::transports::Http;
 pub struct ClientOptions<'a> {
     pub network_id: Option<usize>,
     pub api_timeout: Option<usize>,
-    pub api_key_credentials: Option<structs::ApiKeyCredentials>,
+    pub api_key_credentials: Option<ApiKeyCredentials<'a>>,
     pub stark_private_key: Option<&'a str>,
     pub web3: Option<web3::Web3<Http>>,
     pub eth_private_key: Option<String>,

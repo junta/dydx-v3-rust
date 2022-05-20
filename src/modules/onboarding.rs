@@ -1,5 +1,5 @@
 use super::super::helper::*;
-pub use super::super::structs::*;
+pub use super::super::types::*;
 use super::super::{ResponseError, Result};
 use chrono::Utc;
 use hmac::{Hmac, Mac};
@@ -42,7 +42,7 @@ impl Onboarding<'_> {
         &self,
         params: CreateUserParams<'_>,
         ethereum_address: &str,
-    ) -> Result<ApiKeyCredentials> {
+    ) -> Result<ApiKeyCredentialsResponse> {
         let path = "onboarding";
         let response = self.request(path, ethereum_address, params).await;
         response

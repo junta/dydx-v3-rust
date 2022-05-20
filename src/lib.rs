@@ -3,7 +3,7 @@ pub mod error;
 pub mod eth_signing;
 pub mod helper;
 pub mod modules;
-pub mod structs;
+pub mod types;
 
 pub use dydx_client::ClientOptions;
 pub use dydx_client::DydxClient;

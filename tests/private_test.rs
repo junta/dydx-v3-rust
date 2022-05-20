@@ -5,7 +5,7 @@ macro_rules! b {
 }
 
 use dydx_v3_rust::helper::*;
-use dydx_v3_rust::structs::*;
+use dydx_v3_rust::types::*;
 use dydx_v3_rust::ClientOptions;
 #[cfg(test)]
 use dydx_v3_rust::DydxClient;
@@ -18,9 +18,9 @@ speculate! {
                 fn DydxClient() -> DydxClient<'static> {
                         let api_key = ApiKeyCredentials {
                                 // test
-                                key: String::from("d58be525-1ec9-5775-c435-61c12a3c4d6a"),
-                                secret: String::from("cYKIG0mX0mLXyw4IG1pBUf7qx1ycnUm593pTKnQT"),
-                                passphrase: String::from("-rgYL26TLDp62Aq5BTek")
+                                key: "d58be525-1ec9-5775-c435-61c12a3c4d6a",
+                                secret: "cYKIG0mX0mLXyw4IG1pBUf7qx1ycnUm593pTKnQT",
+                                passphrase: "-rgYL26TLDp62Aq5BTek"
                         };
                         let options = ClientOptions {
                                 network_id: Some(3),
@@ -61,9 +61,9 @@ speculate! {
                                 fn DydxClientNonAuth() -> DydxClient<'static> {
                                         let api_key = ApiKeyCredentials {
                                                 // account2 testnet
-                                                key: String::from("ed85a071-c6b4-b4f1-c965-efb238d16c5e"),
-                                                secret: String::from("1iDz27dyq4RspTkP-rfTcFN6ouxTgHmTT_sKJogU"),
-                                                passphrase: String::from("CfbXaq6O-Yd3jKOqh10a")
+                                                key: "ed85a071-c6b4-b4f1-c965-efb238d16c5e",
+                                                secret: "1iDz27dyq4RspTkP-rfTcFN6ouxTgHmTT_sKJogU",
+                                                passphrase: "CfbXaq6O-Yd3jKOqh10a"
                                         };
                                         let options = ClientOptions {
                                                 network_id: Some(3),

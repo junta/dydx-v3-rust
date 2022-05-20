@@ -3,16 +3,18 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 #[derive(Debug, Clone, Deserialize)]
-pub struct ApiKeyCredentials {
+pub struct ApiKeyCredentialsResponse {
     pub key: String,
     pub secret: String,
     pub passphrase: String,
 }
-// pub struct ApiKeyCredentials<'a> {
-//     pub key: &'a str,
-//     pub secret: &'a str,
-//     pub passphrase: &'a str,
-// }
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct ApiKeyCredentials<'a> {
+    pub key: &'a str,
+    pub secret: &'a str,
+    pub passphrase: &'a str,
+}
 
 // pub struct KeyPair<'a> {
 //     pub public_key: &'a str,
@@ -20,26 +22,15 @@ pub struct ApiKeyCredentials {
 //     pub private_key: &'a str,
 // }
 
-// #[non_exhaustive]
-// #[derive(Default, Debug, Clone, PartialEq, Deserialize)]
-// pub struct OrderSide;
+#[non_exhaustive]
+#[derive(Debug, Clone, Deserialize)]
+pub struct OrderSide;
 
-// impl OrderSide {
-//     pub const BUY: &'static str = "BUY";
-//     pub const SELL: &'static str = "SELL";
-// }
+impl OrderSide {
+    pub const BUY: &'static str = "BUY";
+    pub const SELL: &'static str = "SELL";
+}
 
-// pub enum Side {
-//     BUY,
-//     SEll,
-// }
-
-// pub struct Side;
-
-// impl Side {
-//     pub const BUY: &'static str = "BUY";
-//     pub const SELL: &'static str = "SELL";
-// }
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct MarketStatsResponse {

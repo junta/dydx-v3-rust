@@ -1,7 +1,7 @@
 // use crate::SignEthPrivateAction;
 
 use super::super::helper::*;
-pub use super::super::structs::*;
+pub use super::super::types::*;
 use super::super::{ResponseError, Result};
 use chrono::Utc;
 use hmac::{Hmac, Mac};
@@ -46,7 +46,10 @@ impl EthPrivate<'_> {
         }
     }
 
-    pub async fn create_api_key(&self, ethereum_address: &str) -> Result<ApiKeyCredentials> {
+    pub async fn create_api_key(
+        &self,
+        ethereum_address: &str,
+    ) -> Result<ApiKeyCredentialsResponse> {
         let path = "api-keys";
         let response = self
             .request(path, Method::POST, ethereum_address, json!({}))
@@ -58,7 +61,7 @@ impl EthPrivate<'_> {
         &self,
         api_key: &str,
         ethereum_address: &str,
-    ) -> Result<ApiKeyCredentials> {
+    ) -> Result<ApiKeyCredentialsResponse> {
         let path = "api-keys";
         let response = self
             .request(path, Method::DELETE, ethereum_address, api_key)

@@ -5,7 +5,7 @@ macro_rules! b {
 }
 
 use dydx_v3_rust::helper::*;
-use dydx_v3_rust::structs::*;
+use dydx_v3_rust::types::*;
 use dydx_v3_rust::ClientOptions;
 #[cfg(test)]
 use dydx_v3_rust::DydxClient;

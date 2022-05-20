@@ -9,35 +9,47 @@ Install [dydx-v3-rust](https://crates.io/crates/dydx-v3-rust) from crates.io. Ad
 ```rust
 [dependencies]
 dydx-v3-rust = "0.1.0"
+tokio = { version = "1.18.2", features = ["full"] }
 ```
 
 # Usage
 
 ## Public API
 
+Sample code to call Get Markets API
+
 ```rust
-use dydx_v3_rust::DydxClient;
- fn DydxClient() -> DydxClient<'static> {
+use dydx_v3_rust::*;
 
+#[tokio::main]
+async fn main() {
     let options: ClientOptions = ClientOptions {
-            network_id: None,
-                                api_timeout: None,
-                                api_key_credentials: None,
-                                stark_private_key: None,
-                                web3: None,
-                                eth_private_key: None
-                        };
-                        DydxClient::new("https://api.dydx.exchange", options)
-                    }
-        let response = DydxClient().public.get_markets(Some(DydxMarket::BTC_USD)).await.unwrap();
-
+        network_id: None,
+        api_timeout: None,
+        api_key_credentials: None,
+        stark_private_key: None,
+        web3: None,
+        eth_private_key: None,
+    };
+    let client = DydxClient::new("https://api.dydx.exchange", options);
+    let response = client
+        .public
+        .get_markets(Some(types::DydxMarket::BTC_USD))
+        .await
+        .unwrap();
+    dbg!(response);
+}
 ```
 
 ## Private API
 
+Sample code to call Get Accounts API
+
 ```rust
 use dydx_v3_rust::DydxClient;
 ```
+
+see more examples in tests folder
 
 If you send new orders or withdrawals, you need python shared library to generate DYDX-SIGNATURE through [PyO3](https://github.com/PyO3/pyo3).
 
