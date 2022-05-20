@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use std::collections::HashMap;
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct ApiKeyCredentials {
@@ -39,13 +40,207 @@ pub struct ApiKeyCredentials {
 //     pub const BUY: &'static str = "BUY";
 //     pub const SELL: &'static str = "SELL";
 // }
-#[derive(Default, Debug, Clone, PartialEq, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct MarketsResponse {
-    pub markets: Markets,
+pub struct MarketStatsResponse {
+    pub markets: HashMap<String, MarketStats>,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct MarketStats {
+    pub market: String,
+    pub open: String,
+    pub high: String,
+    pub low: String,
+    pub close: String,
+    pub base_volume: String,
+    pub quote_volume: String,
+    #[serde(rename = "type")]
+    pub type_field: String,
+}
+
+#[derive(Default, Debug, Deserialize)]
+#[non_exhaustive]
+pub struct MarketStatisticDay;
+impl MarketStatisticDay {
+    pub const ONE: &'static str = "1";
+    pub const SEVEN: &'static str = "7";
+    pub const THIRTY: &'static str = "30";
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct HistoricalFundingResponse {
+    pub historical_funding: Vec<HistoricalFunding>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct HistoricalFunding {
+    pub market: String,
+    pub rate: String,
+    pub price: String,
+    pub effective_at: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ConfigResponse {
+    pub collateral_asset_id: String,
+    pub collateral_token_address: String,
+    pub default_maker_fee: String,
+    pub default_taker_fee: String,
+    pub exchange_address: String,
+    pub max_expected_batch_length_minutes: String,
+    pub max_fast_withdrawal_amount: String,
+    pub cancel_order_rate_limiting: CancelOrderRateLimiting,
+    pub place_order_rate_limiting: PlaceOrderRateLimiting,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CancelOrderRateLimiting {
+    pub max_points_multi: u32,
+    pub max_points_single: u32,
+    pub window_sec_multi: u32,
+    pub window_sec_single: u32,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PlaceOrderRateLimiting {
+    pub max_points: u32,
+    pub window_sec: u32,
+    pub target_notional: u32,
+    pub min_limit_consumption: u32,
+    pub min_market_consumption: u32,
+    pub min_triggerable_consumption: u32,
+    pub max_order_consumption: u32,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct LeaderboardPnlResponse {
+    pub top_pnls: Vec<PNLForPeriod>,
+    pub num_participants: u32,
+    pub started_at: Option<String>,
+    pub ends_at: Option<String>,
+    pub updated_at: String,
+    pub season_number: Option<u16>,
+    pub prize_pool: Option<u32>,
+    pub num_hedgies_winners: Option<u16>,
+    pub num_prize_winners: Option<u16>,
+    pub ratio_promoted: Option<f32>,
+    pub ratio_demoted: Option<f32>,
+    pub minimum_equity: Option<u16>,
+    pub minimum_dydx_tokens: Option<u16>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PNLForPeriod {
+    pub username: Option<String>,
+    pub ethereum_address: Option<String>,
+    pub public_id: String,
+    pub absolute_pnl: String,
+    pub percent_pnl: String,
+    pub absolute_rank: u32,
+    pub percent_rank: u32,
+    pub season_expected_outcome: Option<String>,
+    pub hedgie_won: Option<u16>,
+    pub prize_won: Option<String>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct UserExistsResponse {
+    pub exists: bool,
+    pub is_proxy_signer: bool,
+    pub contract_address: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct UsernameExistsResponse {
+    pub exists: bool,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct GetTimeResponse {
+    pub iso: String,
+    pub epoch: f64,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RetroactiveMiningRewardsResponse {
+    pub allocation: String,
+    pub target_volume: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CurrentlyRevealedHedgies {
+    pub daily: HedgiePeriodResponseObject,
+    pub weekly: HedgiePeriodResponseObject,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct HedgiePeriodResponse {
+    pub historical_token_ids: Vec<HedgiePeriodResponseObject>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct HedgiePeriodResponseObject {
+    pub block_number: String,
+    pub token_ids: Vec<String>,
+    pub competition_period: u16,
+}
+
+#[derive(Default, Debug, Deserialize)]
+#[non_exhaustive]
+pub struct NftRevealType;
+impl NftRevealType {
+    pub const Day: &'static str = "daily";
+    pub const Week: &'static str = "weekly";
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct InsuranceFundBalanceResponse {
+    pub balance: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ProfilePublicResponse {
+    pub username: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct MarketsResponse {
+    pub markets: HashMap<String, MarketData>,
+}
+
+#[derive(Default, Debug, Deserialize)]
+#[non_exhaustive]
+pub struct CandleResolution;
+impl CandleResolution {
+    pub const ONE_DAY: &'static str = "1DAY";
+    pub const FOUR_HOURS: &'static str = "4HOURS";
+    pub const ONE_HOUR: &'static str = "1HOUR";
+    pub const THIRTY_MINS: &'static str = "30MINS";
+    pub const FIFTEEN_MINS: &'static str = "15MINS";
+    pub const FIVE_MINS: &'static str = "5MINS";
+    pub const ONE_MIN: &'static str = "1MIN";
+}
+
+#[derive(Default, Debug, Deserialize)]
 #[non_exhaustive]
 pub struct DydxMarket;
 
@@ -85,73 +280,6 @@ impl DydxMarket {
 
 #[derive(Default, Debug, Clone, PartialEq, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Markets {
-    #[serde(rename = "BTC-USD")]
-    pub btc_usd: Option<MarketData>,
-    #[serde(rename = "SUSHI-USD")]
-    pub sushi_usd: Option<MarketData>,
-    #[serde(rename = "AVAX-USD")]
-    pub avax_usd: Option<MarketData>,
-    #[serde(rename = "1INCH-USD")]
-    pub inch_usd: Option<MarketData>,
-    #[serde(rename = "ETH-USD")]
-    pub eth_usd: Option<MarketData>,
-    #[serde(rename = "XMR-USD")]
-    pub xmr_usd: Option<MarketData>,
-    #[serde(rename = "COMP-USD")]
-    pub comp_usd: Option<MarketData>,
-    #[serde(rename = "ALGO-USD")]
-    pub algo_usd: Option<MarketData>,
-    #[serde(rename = "BCH-USD")]
-    pub bch_usd: Option<MarketData>,
-    #[serde(rename = "CRV-USD")]
-    pub crv_usd: Option<MarketData>,
-    #[serde(rename = "ETC-USD")]
-    pub etc_usd: Option<MarketData>,
-    #[serde(rename = "UNI-USD")]
-    pub uni_usd: Option<MarketData>,
-    #[serde(rename = "MKR-USD")]
-    pub mkr_usd: Option<MarketData>,
-    #[serde(rename = "LTC-USD")]
-    pub ltc_usd: Option<MarketData>,
-    #[serde(rename = "EOS-USD")]
-    pub eos_usd: Option<MarketData>,
-    #[serde(rename = "DOGE-USD")]
-    pub doge_usd: Option<MarketData>,
-    #[serde(rename = "ATOM-USD")]
-    pub atom_usd: Option<MarketData>,
-    #[serde(rename = "ZRX-USD")]
-    pub zrx_usd: Option<MarketData>,
-    #[serde(rename = "SOL-USD")]
-    pub sol_usd: Option<MarketData>,
-    #[serde(rename = "UMA-USD")]
-    pub uma_usd: Option<MarketData>,
-    #[serde(rename = "AAVE-USD")]
-    pub aave_usd: Option<MarketData>,
-    #[serde(rename = "ADA-USD")]
-    pub ada_usd: Option<MarketData>,
-    #[serde(rename = "SNX-USD")]
-    pub snx_usd: Option<MarketData>,
-    #[serde(rename = "FIL-USD")]
-    pub fil_usd: Option<MarketData>,
-    #[serde(rename = "ZEC-USD")]
-    pub zec_usd: Option<MarketData>,
-    #[serde(rename = "YFI-USD")]
-    pub yfi_usd: Option<MarketData>,
-    #[serde(rename = "XLM-USD")]
-    pub xlm_usd: Option<MarketData>,
-    #[serde(rename = "LINK-USD")]
-    pub link_usd: Option<MarketData>,
-    #[serde(rename = "DOT-USD")]
-    pub dot_usd: Option<MarketData>,
-    #[serde(rename = "MATIC-USD")]
-    pub matic_usd: Option<MarketData>,
-    #[serde(rename = "ENJ-USD")]
-    pub enj_usd: Option<MarketData>,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Deserialize)]
-#[serde(rename_all = "camelCase")]
 pub struct MarketData {
     pub market: String,
     pub status: String,
@@ -183,7 +311,7 @@ pub struct MarketData {
     pub synthetic_asset_id: String,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct OrderbookResponse {
     pub asks: Vec<OrderbookResponseOrder>,
@@ -197,7 +325,7 @@ pub struct OrderbookResponseOrder {
     pub price: String,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Trade {
     // TODO: change to enum constant
@@ -207,12 +335,12 @@ pub struct Trade {
     pub created_at: String,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct TradesResponse {
     pub trades: Vec<Trade>,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Candle {
     pub started_at: String,
@@ -230,17 +358,17 @@ pub struct Candle {
     pub starting_open_interest: String,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct CandlesResponse {
     pub candles: Vec<Candle>,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct AccountResponse {
     pub account: AccountObject,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct AccountsResponse {
     pub accounts: Vec<AccountObject>,
 }
@@ -265,7 +393,7 @@ pub struct PositionsResponse {
     pub positions: Vec<PositionResponseObject>,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PositionResponseObject {
     // pub market: Market;
@@ -353,32 +481,51 @@ pub struct PositionsMap {
     pub enj_usd: Option<PositionResponseObject>,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ApiOrder {
-    pub market: String,
-    pub side: String,
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ApiOrder<'a> {
+    pub market: &'a str,
+    pub side: &'a str,
     #[serde(rename = "type")]
-    pub type_field: String,
-    pub size: String,
-    pub price: String,
-    pub time_in_force: String,
+    pub type_field: &'a str,
+    pub time_in_force: &'a str,
     pub post_only: bool,
-    pub limit_fee: String,
+    pub size: &'a str,
+    pub price: &'a str,
+    pub limit_fee: &'a str,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub client_id: Option<String>,
+    pub cancel_id: Option<&'a str>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub cancel_id: Option<String>,
+    pub trigger_price: Option<&'a str>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub trigger_price: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub trailing_percent: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub expiration: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub signature: Option<String>,
+    pub trailing_percent: Option<&'a str>,
+    pub expiration: &'a str,
+    pub client_id: &'a str,
+    pub signature: &'a str,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize)]
+pub struct ApiOrderParams<'a> {
+    pub position_id: usize,
+    pub market: &'a str,
+    pub side: &'a str,
+    #[serde(rename = "type")]
+    pub type_field: &'a str,
+    pub size: &'a str,
+    pub price: &'a str,
+    pub time_in_force: &'a str,
+    pub post_only: bool,
+    pub limit_fee: &'a str,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub cancel_id: Option<&'a str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub trigger_price: Option<&'a str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub trailing_percent: Option<&'a str>,
+    pub expiration: &'a str,
+}
+
+#[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct OrderResponse {
     pub id: String,
@@ -402,13 +549,13 @@ pub struct OrderResponse {
     pub cancel_reason: Option<String>,
 }
 
-#[derive(Default, Debug, PartialEq, Deserialize)]
+#[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CancelOrderResponse {
     pub cancel_orders: Vec<OrderResponse>,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct UserResponseObject {
     pub public_id: String,
@@ -433,12 +580,12 @@ pub struct UserResponseObject {
     pub hedgies_held: Vec<usize>,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct UserResponse {
     pub user: UserResponseObject,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct UserParams<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -454,7 +601,7 @@ pub struct UserParams<'a> {
     pub username: Option<&'a str>,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CreateUserParams<'a> {
     pub stark_key: &'a str,
@@ -463,4 +610,35 @@ pub struct CreateUserParams<'a> {
     pub referred_by_affiliate_link: Option<&'a str>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub country: Option<&'a str>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TransferResponseObject {
+    pub id: String,
+    #[serde(rename = "type")]
+    pub type_field: String,
+    pub debit_asset: String,
+    pub credit_asset: String,
+    pub debit_amount: String,
+    pub credit_amount: String,
+    pub transaction_hash: Option<String>,
+    pub status: String,
+    pub created_at: String,
+    pub confirmed_at: Option<String>,
+    pub client_id: String,
+    pub from_address: Option<String>,
+    pub to_address: Option<String>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct TransferResponse {
+    pub transfer: TransferResponseObject,
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CreateAccountParams<'a> {
+    pub stark_key: &'a str,
+    pub stark_key_y_coordinate: &'a str,
 }
