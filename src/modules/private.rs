@@ -116,6 +116,7 @@ impl Private<'_> {
             &client_id,
             user_params.expiration,
             self.stark_private_key.unwrap(),
+            user_params.path,
         )
         .unwrap();
 

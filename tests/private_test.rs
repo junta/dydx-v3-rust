@@ -135,6 +135,7 @@ speculate! {
                                         trigger_price: None,
                                         trailing_percent: None,
                                         expiration: expiration_unix,
+                                        path: "./src/stark"
                                 };
                                 let order = DydxClient().private.unwrap().create_order(order_params).await.unwrap();
                                 dbg!(order);

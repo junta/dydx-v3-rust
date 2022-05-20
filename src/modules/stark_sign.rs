@@ -15,8 +15,10 @@ pub fn sign_order(
     // expiration_epoch_seconds: &str,
     expiration_epoch_seconds: i64,
     private_key: &str,
+    path: &str,
 ) -> PyResult<String> {
-    let path = Path::new("./src/stark");
+    // let path = Path::new("./src/stark");
+    let path = Path::new(path);
     let py_app = fs::read_to_string(path.join("stark_sign.py"))?;
     let from_python = Python::with_gil(|py| -> PyResult<Py<PyAny>> {
         let syspath: &PyList = py.import("sys")?.getattr("path")?.downcast::<PyList>()?;

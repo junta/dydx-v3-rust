@@ -516,6 +516,7 @@ pub struct ApiOrderParams<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub trailing_percent: Option<&'a str>,
     pub expiration: i64,
+    pub path: &'a str,
 }
 
 #[derive(Debug, Clone, Deserialize)]
