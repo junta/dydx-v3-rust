@@ -17,16 +17,16 @@ speculate! {
         describe "privateTest" {
                 fn DydxClient() -> DydxClient<'static> {
                         let api_key = ApiKeyCredentials {
-                                // account2 testnet
-                                key: String::from("ed85a071-c6b4-b4f1-c965-efb238d16c5e"),
-                                secret: String::from("1iDz27dyq4RspTkP-rfTcFN6ouxTgHmTT_sKJogU"),
-                                passphrase: String::from("CfbXaq6O-Yd3jKOqh10i")
+                                // test
+                                key: String::from("d58be525-1ec9-5775-c435-61c12a3c4d6a"),
+                                secret: String::from("cYKIG0mX0mLXyw4IG1pBUf7qx1ycnUm593pTKnQT"),
+                                passphrase: String::from("-rgYL26TLDp62Aq5BTek")
                         };
                         let options = ClientOptions {
                                 network_id: Some(3),
                                 api_timeout: None,
                                 api_key_credentials: Some(api_key),
-                                stark_private_key: Some("0657eaa201ba872f72c0e6e2db278d8cda1b60de4313f02213aaf2b3421bff56"),
+                                stark_private_key: Some("039dd31bce09db7330e9fce956f111a5e9fc2be2e2aaecb065f05e8a42fcbca4"),
                                 web3: None,
                                 eth_private_key: None
                         };
@@ -50,9 +50,9 @@ speculate! {
 
                 it "getAccount" {
                         b!(async {
-                                let response = DydxClient().private.unwrap().get_account("0x1e88f23864a8FE784eB152967AccDb394D3b88AD").await.unwrap();
-                                // println!("{:?}", response);
-                                dbg!(response);
+                                let testAddress = "0x72Be8d8d7d1d10d0e7f12Df508bB29b33cFFA06B";
+                                let response = DydxClient().private.unwrap().get_account(testAddress).await.unwrap();
+                                // dbg!(response);
                         });
                 }
 
@@ -82,7 +82,6 @@ speculate! {
                                         Ok(v) => println!("{:?}", v),
                                         Err(e) => println!("{:?}", e),
                                     }
-                                // println!("{:?}", response);
                                 // dbg!(response);
                         });
                 }
@@ -90,16 +89,14 @@ speculate! {
                 it "getAccounts" {
                         b!(async {
                                 let response = DydxClient().private.unwrap().get_accounts().await.unwrap();
-                                // println!("{:?}", response);
-                                dbg!(&response);
-                                assert_eq!(response.accounts[0].position_id, "60273");
+                                // dbg!(&response);
+                                assert_eq!(response.accounts[0].position_id, "62683");
                         });
                 }
 
                 it "getPositionsWithNoParameters" {
                         b!(async {
                                 let response = DydxClient().private.unwrap().get_positions(None, None, None, None).await.unwrap();
-                                // println!("{:?}", response);
                                 // dbg!(response);
                         });
                 }
@@ -107,7 +104,6 @@ speculate! {
                 it "getPositions" {
                         b!(async {
                                 let response = DydxClient().private.unwrap().get_positions(Some(DydxMarket::BTC_USD), None, None, Some("2022-04-01T02:43:02.946Z")).await.unwrap();
-                                println!("{:?}", response);
                                 // dbg!(response);
                         });
                 }
@@ -115,32 +111,31 @@ speculate! {
                 it "generateClientId" {
                         b!(async {
                                 let client_id = generate_random_client_id();
-                                dbg!(client_id);
+                                // dbg!(client_id);
                         });
                 }
 
-                it "createOrder" {
-                        b!(async {
-                                let order_params = ApiOrder {
-                                        market: String::from("BTC-USD"),
-                                        side: String::from("BUY"),
-                                        type_field: String::from("MARKET"),
-                                        size: String::from("0.01"),
-                                        price: String::from("100000"),
-                                        time_in_force: String::from("FOK"),
-                                        post_only: false,
-                                        limit_fee: String::from("0.06"),
-                                        client_id: None,
-                                        cancel_id: None,
-                                        trigger_price: None,
-                                        trailing_percent: None,
-                                        expiration: None,
-                                        signature: None
-                                };
-                                let client_id = DydxClient().private.unwrap().create_order(order_params, 60273).await.unwrap();
-                                dbg!(client_id);
-                        });
-                }
+                // it "createOrder" {
+                //         b!(async {
+                //                 let order_params = ApiOrderParams {
+                //                         position_id: 62392,
+                //                         market: "BTC-USD",
+                //                         side: "BUY",
+                //                         type_field: "MARKET",
+                //                         time_in_force: "FOK",
+                //                         post_only: false,
+                //                         size: "0.01",
+                //                         price: "100000",
+                //                         limit_fee: "0.06",
+                //                         cancel_id: None,
+                //                         trigger_price: None,
+                //                         trailing_percent: None,
+                //                         expiration: "1656633600",
+                //                 };
+                //                 let order = DydxClient().private.unwrap().create_order(order_params).await.unwrap();
+                //                 dbg!(order);
+                //         });
+                // }
 
                 it "updateUser" {
                         b!(async {
@@ -158,6 +153,15 @@ speculate! {
                         });
                 }
 
+                // it "createAccount" {
+                //         b!(async {
+                //                 let test_stark_public_key = "0084868a931891833df41ff83980f79889a045a46bbd273ec60ff402d7a1293f";
+                //                 let test_stark_public_key_y_coordinate = "024b4de622d8acc9198800f5607c4a25968425fe268afe0272dbd3d5e119407d";
+                //                 let response = DydxClient().private.unwrap().create_account(test_stark_public_key, test_stark_public_key_y_coordinate).await.unwrap();
+                //                 // println!("{:?}", response);
+                //         });
+                // }
+
                 // it "sign" {
                 //         b!(async {
                 //                 let signed = DydxClient().private.unwrap().sign("/v3/users", "PUT", &String::from("2022-04-12T04:11:00.369Z"), Some(r#"{"email":"fff@example.com","userData":"{}"}"#));
@@ -169,6 +173,29 @@ speculate! {
                         b!(async {
                                 let response = DydxClient().private.unwrap().cancel_all_orders(Some(DydxMarket::BTC_USD)).await.unwrap();
                                 // println!("{:?}", response);
+                        });
+                }
+
+                it "requestTestnetTokens" {
+                        b!(async {
+                                let response = DydxClient().private.unwrap().request_testnet_tokens().await.unwrap();
+                                // println!("{:?}", response);
+                        });
+                }
+
+
+                it "sendVerificationEmail" {
+                        b!(async {
+                                let response = DydxClient().private.unwrap().send_verification_email().await.unwrap();
+                                // println!("{:?}", response);
+                                assert_eq!(response, 400);
+                        });
+                }
+
+                it "getPrivateProfile" {
+                        b!(async {
+                                let response = DydxClient().private.unwrap().get_profile().await.unwrap();
+                                println!("{:?}", response);
                         });
                 }
         }

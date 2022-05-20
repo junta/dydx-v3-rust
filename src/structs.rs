@@ -217,7 +217,7 @@ pub struct InsuranceFundBalanceResponse {
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ProfilePublicResponse {
-    pub username: String,
+    pub username: Option<String>,
     pub ethereum_address: String,
     #[serde(rename = "DYDXHoldings")]
     pub dydx_holdings: String,
@@ -227,6 +227,24 @@ pub struct ProfilePublicResponse {
     pub twitter_handle: String,
     pub trading_leagues: TradingLeagues,
     pub trading_pnls: TradingPnls,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ProfilePrivateResponse {
+    pub username: Option<String>,
+    pub public_id: String,
+    pub ethereum_address: String,
+    #[serde(rename = "DYDXHoldings")]
+    pub dydx_holdings: String,
+    #[serde(rename = "stakedDYDXHoldings")]
+    pub staked_dydx_holdings: String,
+    pub hedgies_held: Vec<u16>,
+    pub twitter_handle: String,
+    pub affiliate_link: Option<String>,
+    pub trading_leagues: TradingLeagues,
+    pub trading_pnls: TradingPnls,
+    pub trading_rewards: TradingRewards,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -242,6 +260,14 @@ pub struct TradingPnls {
     pub absolute_pnl30_d: Option<String>,
     pub percent_pnl30_d: Option<String>,
     pub volume30_d: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TradingRewards {
+    pub cur_epoch: u16,
+    pub cur_epoch_estimated_rewards: String,
+    pub prev_epoch_estimated_rewards: String,
 }
 
 #[derive(Debug, Clone, Deserialize)]

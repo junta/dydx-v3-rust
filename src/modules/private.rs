@@ -1,7 +1,8 @@
 use super::super::helper::*;
-pub use super::super::structs::*;
+use super::super::structs::*;
 use super::super::{ResponseError, Result};
-use chrono::Utc;
+use super::stark_sign::*;
+use chrono::prelude::*;
 use hmac::{Hmac, Mac};
 use http::{Method, StatusCode};
 use reqwest::RequestBuilder;
@@ -48,14 +49,30 @@ impl Private<'_> {
     }
 
     pub async fn get_accounts(&self) -> Result<AccountsResponse> {
-        let path = "accounts";
-        let response = self.request(path, Method::GET, Vec::new(), json!({})).await;
+        let response = self
+            .request("accounts", Method::GET, Vec::new(), json!({}))
+            .await;
         response
     }
 
     pub async fn update_user(&self, data: UserParams<'_>) -> Result<UserResponse> {
-        let path = "users";
-        let response = self.request(path, Method::PUT, Vec::new(), data).await;
+        let response = self.request("users", Method::PUT, Vec::new(), data).await;
+        response
+    }
+
+    pub async fn create_account(
+        &self,
+        stark_key: &str,
+        stark_key_y_coordinate: &str,
+    ) -> Result<AccountResponse> {
+        let data = CreateAccountParams {
+            stark_key,
+            stark_key_y_coordinate,
+        };
+
+        let response = self
+            .request("accounts", Method::POST, Vec::new(), data)
+            .await;
         response
     }
 
@@ -66,7 +83,6 @@ impl Private<'_> {
         limit: Option<&str>,
         created_before_or_at: Option<&str>,
     ) -> Result<PositionsResponse> {
-        let path = "positions";
         let mut parameters = Vec::new();
         if let Some(local_var) = market {
             parameters.push(("market", local_var));
@@ -80,52 +96,99 @@ impl Private<'_> {
         if let Some(local_var) = created_before_or_at {
             parameters.push(("createdBeforeOrAt", local_var));
         }
-        let response = self.request(path, Method::GET, parameters, json!({})).await;
-        response
-    }
-
-    pub async fn create_order(&self, params: ApiOrder, position_id: &str) -> Result<OrderResponse> {
-        let mut parameters = params.clone();
-        // let client_id = match params.client_id {
-        //     Some(v) => v,
-        //     None => generate_random_client_id(),
-        // };
-        let client_id = String::from("4038711184032522");
-
-        let signature: String;
-        match params.signature {
-            Some(v) => signature = v,
-            None => {
-                // if let None = self.stark_private_key {
-                //     return Err(Error::NoStarkKeyError);
-                // }
-                // TODO: sign code
-                signature = String::from("02c757ea45bf5232a1960335bb73e1d246d8205d3c7c12ddec392243667e199102d4ea763bf140fe7d2abb34cc8c44c67e2804761d2e5764d36a9a37546dc49f");
-            }
-        }
-        parameters.client_id = Some(client_id);
-        parameters.signature = Some(signature);
-
-        let path = "orders";
-        // let path = format!("{}?{}", path, new_params);
-        // dbg!(&path);
         let response = self
-            .request(path, Method::POST, Vec::new(), parameters)
+            .request("positions", Method::GET, parameters, json!({}))
             .await;
         response
     }
 
-    // TODO: set parameter properly
+    pub async fn create_order(&self, user_params: ApiOrderParams<'_>) -> Result<OrderResponse> {
+        let client_id = generate_random_client_id();
+        // let client_id = String::from("15012769582582997");
+        // let private_key = "58c7d5a90b1776bde86ebac077e053ed85b0f7164f53b080304a531947f46e3";
+
+        let signature = sign_order(
+            self.network_id,
+            user_params.market,
+            user_params.side,
+            user_params.position_id,
+            user_params.size,
+            user_params.price,
+            user_params.limit_fee,
+            &client_id,
+            user_params.expiration,
+            self.stark_private_key.unwrap(),
+        )
+        .unwrap();
+        dbg!(&signature);
+        // signature = String::from("02c757ea45bf5232a1960335bb73e1d246d8205d3c7c12ddec392243667e199102d4ea763bf140fe7d2abb34cc8c44c67e2804761d2e5764d36a9a37546dc49f");
+
+        let parsed_expiration = user_params.expiration.parse::<i64>().unwrap();
+        let naive = NaiveDateTime::from_timestamp(parsed_expiration, 0);
+        let datetime: DateTime<Utc> = DateTime::from_utc(naive, Utc);
+        let expiration_second = datetime.format("%Y-%m-%dT%H:%M:%S%.3fZ").to_string();
+        dbg!(&expiration_second);
+
+        let parameters = ApiOrder {
+            market: user_params.market,
+            side: user_params.side,
+            type_field: user_params.type_field,
+            size: user_params.size,
+            price: user_params.price,
+            time_in_force: user_params.time_in_force,
+            post_only: user_params.post_only,
+            limit_fee: user_params.limit_fee,
+            cancel_id: user_params.cancel_id,
+            trigger_price: user_params.trigger_price,
+            trailing_percent: user_params.trailing_percent,
+            expiration: expiration_second.as_str(),
+            client_id: client_id.as_str(),
+            signature: signature.as_str(),
+        };
+
+        // let path = format!("{}?{}", path, new_params);
+        // dbg!(&path);
+        let response = self
+            .request("orders", Method::POST, Vec::new(), parameters)
+            .await;
+        response
+    }
+
     pub async fn cancel_all_orders(&self, market: Option<&str>) -> Result<CancelOrderResponse> {
-        let path = "orders";
         let mut parameters = Vec::new();
         if let Some(local_var) = market {
             parameters.push(("market", local_var));
         }
         let response = self
-            .request(path, Method::DELETE, parameters, json!({}))
+            .request("orders", Method::DELETE, parameters, json!({}))
             .await;
         response
+    }
+
+    pub async fn send_verification_email(&self) -> Result<StatusCode> {
+        let response = self.put("emails/send-verification-email").await;
+        response
+    }
+
+    pub async fn request_testnet_tokens(&self) -> Result<TransferResponse> {
+        let response = self
+            .request("testnet/tokens", Method::POST, Vec::new(), json!({}))
+            .await;
+        response
+    }
+
+    pub async fn get_profile(&self) -> Result<ProfilePrivateResponse> {
+        let response = self
+            .request("profile/private", Method::GET, Vec::new(), json!({}))
+            .await;
+        response
+    }
+
+    async fn put(&self, path: &str) -> Result<StatusCode> {
+        let url = format!("{}/v3/{}", &self.host, path);
+        let req_builder = self.client.put(url);
+        let result = req_builder.send().await?;
+        Ok(result.status())
     }
 
     async fn request<T: for<'de> Deserialize<'de>, V: Serialize>(
@@ -143,11 +206,12 @@ impl Private<'_> {
             format!("{}?{}", request_path, dummy_url.unwrap().query().unwrap())
         };
 
-        // let iso_timestamp = String::from("2022-04-12T03:29:57.239Z");
+        // let iso_timestamp = String::from("2022-05-19T02:46:22.071Z");
         let iso_timestamp = Utc::now().format("%Y-%m-%dT%H:%M:%S%.3fZ").to_string();
 
         let json = to_string(&data).unwrap();
         let json_v = to_value(&data).unwrap();
+        dbg!(&json_v);
 
         let signature = self.sign(
             request_path.as_str(),
@@ -168,6 +232,8 @@ impl Private<'_> {
             _ => self.client.get(url),
         };
 
+        dbg!(&json_v);
+
         let req_builder = req_builder
             .header("DYDX-SIGNATURE", signature.as_str())
             .header("DYDX-TIMESTAMP", iso_timestamp.as_str())
@@ -183,6 +249,7 @@ impl Private<'_> {
         } else {
             req_builder
         };
+        dbg!(&req_builder);
         let response = req_builder.send().await;
 
         match response {

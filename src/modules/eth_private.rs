@@ -1,4 +1,4 @@
-use crate::SignEthPrivateAction;
+// use crate::SignEthPrivateAction;
 
 use super::super::helper::*;
 pub use super::super::structs::*;
@@ -23,7 +23,7 @@ pub struct EthPrivate<'a> {
     // TODO: should accept IPC, WS
     web3: web3::Web3<Http>,
     // sec_key: secp256k1::SecretKey,
-    signer: SignEthPrivateAction,
+    // signer: SignEthPrivateAction,
 }
 
 impl EthPrivate<'_> {
@@ -41,7 +41,7 @@ impl EthPrivate<'_> {
             host,
             network_id,
             web3,
-            signer: SignEthPrivateAction::new(network_id, eth_private_key.to_string()),
+            // signer: SignEthPrivateAction::new(network_id, eth_private_key.to_string()),
             // sec_key: eth_private_key.parse().unwrap(),
         }
     }
@@ -86,7 +86,7 @@ impl EthPrivate<'_> {
         //     Some(json.as_str()),
         // );
 
-        let signature = self.signer.sign();
+        // let signature = self.signer.sign();
 
         let signature = String::from("aaa");
 

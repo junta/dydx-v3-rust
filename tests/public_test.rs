@@ -163,7 +163,7 @@ speculate! {
                         });
                 }
 
-                it "getProfile" {
+                it "getPublicProfile" {
                         b!(async {
                                 let response = DydxClient().public.get_profile("SIFTBRXH").await.unwrap();
                                 dbg!(response);
