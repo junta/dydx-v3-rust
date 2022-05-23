@@ -13,6 +13,8 @@ use std::time::Duration;
 use web3::transports::Http;
 use web3::Transport;
 use web3::Web3;
+
+#[derive(Debug, Clone)]
 pub struct Onboarding<'a> {
     client: reqwest::Client,
     host: &'a str,

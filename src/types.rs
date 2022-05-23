@@ -636,9 +636,52 @@ pub struct TransferResponse {
     pub transfer: TransferResponseObject,
 }
 
+#[derive(Debug, Clone, Deserialize)]
+pub struct TransfersResponse {
+    pub transfers: Vec<TransferResponseObject>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct WithdrawalResponse {
+    pub withdrawal: TransferResponseObject,
+}
+
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CreateAccountParams<'a> {
     pub stark_key: &'a str,
     pub stark_key_y_coordinate: &'a str,
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ApiWithdrawParams<'a> {
+    pub position_id: &'a str,
+    pub amount: &'a str,
+    pub asset: &'a str,
+    pub expiration: i64,
+    pub path: &'a str,
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ApiWithdraw<'a> {
+    pub amount: &'a str,
+    pub asset: &'a str,
+    pub expiration: &'a str,
+    pub client_id: &'a str,
+    pub signature: &'a str,
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ApiFastWithdrawalParams<'a> {
+    pub position_id: &'a str,
+    pub credit_asset: &'a str,
+    pub credit_amount: &'a str,
+    pub debit_amount: &'a str,
+    pub to_address: &'a str,
+    pub lp_position_id: &'a str,
+    pub expiration: i64,
+    pub path: &'a str,
 }

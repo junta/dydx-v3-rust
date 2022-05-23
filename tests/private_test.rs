@@ -90,7 +90,6 @@ speculate! {
                         b!(async {
                                 let response = DydxClient().private.unwrap().get_accounts().await.unwrap();
                                 // dbg!(&response);
-                                assert_eq!(response.accounts[0].position_id, "62683");
                         });
                 }
 
@@ -138,6 +137,31 @@ speculate! {
                                         path: "./src/stark"
                                 };
                                 let order = DydxClient().private.unwrap().create_order(order_params).await.unwrap();
+                                dbg!(order);
+                        });
+                }
+
+                it "getTransfers" {
+                        b!(async {
+                                let response = DydxClient().private.unwrap().get_transfers("WITHDRAWAL", None, None).await.unwrap();
+                                dbg!(response);
+                        });
+                }
+
+                it "createWithdraw" {
+                        b!(async {
+                                let datetime_now: DateTime<Utc> = Utc::now();
+                                let expiration = datetime_now + Duration::days(8);
+                                let expiration_unix = expiration.timestamp();
+
+                                let withdraw_params = ApiWithdrawParams {
+                                        position_id: "62392",
+                                        amount: "3",
+                                        asset: "USDC",
+                                        expiration: expiration_unix,
+                                        path: "./src/stark"
+                                };
+                                let order = DydxClient().private.unwrap().create_withdraw(withdraw_params).await.unwrap();
                                 dbg!(order);
                         });
                 }

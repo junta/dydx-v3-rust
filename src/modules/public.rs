@@ -5,6 +5,7 @@ use std::time::Duration;
 
 pub use super::super::types::*;
 
+#[derive(Debug, Clone)]
 pub struct Public<'a> {
     client: reqwest::Client,
     pub host: &'a str,

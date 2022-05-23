@@ -12,6 +12,7 @@ use serde_json::*;
 use sha2::Sha256;
 use std::time::Duration;
 
+#[derive(Debug, Clone)]
 pub struct Private<'a> {
     client: reqwest::Client,
     host: &'a str,
@@ -143,6 +144,60 @@ impl Private<'_> {
 
         let response = self
             .request("orders", Method::POST, Vec::new(), parameters)
+            .await;
+        response
+    }
+
+    pub async fn create_withdraw(
+        &self,
+        user_params: ApiWithdrawParams<'_>,
+    ) -> Result<WithdrawalResponse> {
+        let client_id = generate_random_client_id();
+
+        let signature = sign_withdraw(
+            self.network_id,
+            user_params.position_id,
+            user_params.amount,
+            &client_id,
+            user_params.expiration,
+            self.stark_private_key.unwrap(),
+            user_params.path,
+        )
+        .unwrap();
+
+        let naive = NaiveDateTime::from_timestamp(user_params.expiration, 0);
+        let datetime: DateTime<Utc> = DateTime::from_utc(naive, Utc);
+        let expiration_second = datetime.format("%Y-%m-%dT%H:%M:%S%.3fZ").to_string();
+
+        let parameters = ApiWithdraw {
+            amount: user_params.amount,
+            asset: user_params.asset,
+            expiration: expiration_second.as_str(),
+            client_id: client_id.as_str(),
+            signature: signature.as_str(),
+        };
+
+        let response = self
+            .request("withdrawals", Method::POST, Vec::new(), parameters)
+            .await;
+        response
+    }
+
+    pub async fn get_transfers(
+        &self,
+        transfer_type: &str,
+        limit: Option<&str>,
+        created_before_or_at: Option<&str>,
+    ) -> Result<TransfersResponse> {
+        let mut parameters = vec![("transferType", transfer_type)];
+        if let Some(local_var) = limit {
+            parameters.push(("limit", local_var));
+        }
+        if let Some(local_var) = created_before_or_at {
+            parameters.push(("createdBeforeOrAt", local_var));
+        }
+        let response = self
+            .request("transfers", Method::GET, Vec::new(), parameters)
             .await;
         response
     }

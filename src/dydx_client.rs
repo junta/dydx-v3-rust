@@ -18,6 +18,7 @@ pub struct ClientOptions<'a> {
 }
 
 #[readonly::make]
+#[derive(Debug, Clone)]
 pub struct DydxClient<'a> {
     #[readonly]
     pub host: &'a str,

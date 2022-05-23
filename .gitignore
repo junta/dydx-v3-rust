@@ -2,3 +2,4 @@
 Cargo.lock
 .env
 src/stark/__pycache__
+src/stark/starkex/__pycache__
