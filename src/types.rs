@@ -544,7 +544,6 @@ pub struct ApiOrderParams<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub trailing_percent: Option<&'a str>,
     pub expiration: i64,
-    pub path: &'a str,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -688,7 +687,6 @@ pub struct ApiWithdrawParams<'a> {
     pub amount: &'a str,
     pub asset: &'a str,
     pub expiration: i64,
-    pub path: &'a str,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -711,5 +709,4 @@ pub struct ApiFastWithdrawalParams<'a> {
     pub to_address: &'a str,
     pub lp_position_id: &'a str,
     pub expiration: i64,
-    pub path: &'a str,
 }

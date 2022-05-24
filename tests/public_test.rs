@@ -172,12 +172,5 @@ speculate! {
                                 // dbg!(response);
                         });
                 }
-
-                it "testEnv" {
-                        b!(async {
-                                let response = DydxClient().public.testEnv();
-                                // dbg!(response);
-                        });
-                }
         }
 }

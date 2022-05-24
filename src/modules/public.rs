@@ -251,9 +251,4 @@ impl Public<'_> {
         let result = req_builder.send().await?;
         Ok(result.status())
     }
-
-    pub fn testEnv(&self) -> () {
-        dbg!(env!("CARGO_MANIFEST_DIR"));
-        ()
-    }
 }

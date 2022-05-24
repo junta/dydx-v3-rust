@@ -141,7 +141,6 @@ speculate! {
                                         trigger_price: None,
                                         trailing_percent: None,
                                         expiration: expiration_unix,
-                                        path: "./src/stark"
                                 };
                                 let order = DydxClient().private.unwrap().create_order(order_params).await.unwrap();
                                 dbg!(order);
@@ -166,7 +165,6 @@ speculate! {
                                         amount: "3",
                                         asset: "USDC",
                                         expiration: expiration_unix,
-                                        path: "./src/stark"
                                 };
                                 let order = DydxClient().private.unwrap().create_withdraw(withdraw_params).await.unwrap();
                                 dbg!(order);
