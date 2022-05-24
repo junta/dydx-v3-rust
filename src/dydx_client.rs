@@ -5,7 +5,6 @@ use crate::modules::eth_private::EthPrivate;
 use crate::modules::onboarding::Onboarding;
 use crate::modules::private::Private;
 use crate::modules::public::Public;
-use web3::transports::Http;
 
 #[derive(Debug)]
 pub struct ClientOptions<'a> {
@@ -13,7 +12,6 @@ pub struct ClientOptions<'a> {
     pub api_timeout: Option<usize>,
     pub api_key_credentials: Option<ApiKeyCredentials<'a>>,
     pub stark_private_key: Option<&'a str>,
-    // pub web3: Option<web3::Web3<Http>>,
     pub eth_private_key: Option<&'a str>,
 }
 
@@ -59,7 +57,7 @@ impl DydxClient<'_> {
                 None => None,
             },
             onboarding: match _options.eth_private_key {
-                Some(r) => Some(Onboarding::new(host, network_id)),
+                Some(r) => Some(Onboarding::new(host, network_id, r)),
                 None => None,
             },
         }

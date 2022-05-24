@@ -3,33 +3,22 @@ macro_rules! b {
                 tokio_test::block_on($e)
         };
 }
-
-use dotenv::dotenv;
 use dydx_v3_rust::helper::*;
 use dydx_v3_rust::types::*;
 use dydx_v3_rust::ClientOptions;
 #[cfg(test)]
 use dydx_v3_rust::DydxClient;
-// use secp256k1::SecretKey;
-use std::env;
-use std::str::FromStr;
-
-// use serde_json::json;
 use speculate::speculate;
+use std::str::FromStr;
 
 speculate! {
         describe "onboardingTest" {
                 fn DydxClient() -> DydxClient<'static> {
-                        dotenv().ok();
-                        let transport = web3::transports::Http::new("https://mainnet.infura.io/v3/ce7426bf07f24fd59a2f7bbb6df217b4").unwrap();
-                        let web3 = web3::Web3::new(transport);
-                        // let eth_private_key = env::var("PRIVATE_KEY").expect("PRIVATE_KEY must be set");
                         let options = ClientOptions {
                                 network_id: Some(3),
                                 api_timeout: None,
                                 api_key_credentials: None,
                                 stark_private_key: None,
-                                // web3: Some(web3),
                                 eth_private_key: Some("2d06e246aaac1458ca0712e3faac6cacd2ed35bda0853998a80568948a3e3b46"),
                         };
                         // DydxClient::new("https://api.dydx.exchange", Some(options))

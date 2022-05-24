@@ -2,32 +2,24 @@ use super::super::helper::*;
 pub use super::super::types::*;
 use super::super::{ResponseError, Result};
 use chrono::Utc;
-use hmac::{Hmac, Mac};
 use http::{Method, StatusCode};
 use reqwest::RequestBuilder;
 use serde::Deserialize;
 use serde::Serialize;
 use serde_json::*;
-use sha2::Sha256;
+
 use std::time::Duration;
-use web3::transports::Http;
-use web3::Transport;
-use web3::Web3;
 
 #[derive(Debug, Clone)]
 pub struct Onboarding<'a> {
     client: reqwest::Client,
     host: &'a str,
     network_id: usize,
+    eth_private_key: &'a str,
 }
 
 impl Onboarding<'_> {
-    pub fn new<'a>(
-        host: &'a str,
-        network_id: usize,
-        // web3: web3::Web3<Http>,
-        // eth_private_key: String,
-    ) -> Onboarding<'a> {
+    pub fn new<'a>(host: &'a str, network_id: usize, eth_private_key: &'a str) -> Onboarding<'a> {
         Onboarding {
             client: reqwest::ClientBuilder::new()
                 .timeout(Duration::from_secs(30))
@@ -35,8 +27,7 @@ impl Onboarding<'_> {
                 .expect("Client::new()"),
             host,
             network_id,
-            // web3,
-            // sec_key: eth_private_key.parse().unwrap(),
+            eth_private_key,
         }
     }
 

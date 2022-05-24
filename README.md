@@ -8,7 +8,7 @@ Install [dydx-v3-rust](https://crates.io/crates/dydx-v3-rust) from crates.io. Ad
 
 ```rust
 [dependencies]
-dydx-v3-rust = "0.1.0"
+dydx-v3-rust = "0.1.6"
 tokio = { version = "1.18.2", features = ["full"] }
 ```
 
@@ -19,7 +19,7 @@ tokio = { version = "1.18.2", features = ["full"] }
 Sample code to call Get Markets API
 
 ```rust
-use dydx_v3_rust::*;
+use dydx_v3_rust::{types::*, ClientOptions, DydxClient};
 
 #[tokio::main]
 async fn main() {
@@ -34,7 +34,7 @@ async fn main() {
     let client = DydxClient::new("https://api.dydx.exchange", options);
     let response = client
         .public
-        .get_markets(Some(types::DydxMarket::BTC_USD))
+        .get_markets(Some(DydxMarket::BTC_USD))
         .await
         .unwrap();
     dbg!(response);
@@ -43,10 +43,11 @@ async fn main() {
 
 ## Private API
 
-Sample code to call Get Accounts API and Create New Order API
+Sample code to call Get Accounts API and then Create New Order API
 
 ```rust
-use dydx_v3_rust::*;
+use chrono::{DateTime, Duration, Utc};
+use dydx_v3_rust::{types::*, ClientOptions, DydxClient};
 
 #[tokio::main]
 async fn main() {
@@ -64,42 +65,43 @@ async fn main() {
         eth_private_key: None,
     };
     let client = DydxClient::new("https://api.dydx.exchange", options);
-    let test_address = "0x72Be8d8d7d1d10d0e7f12Df508bB29b33cFFA06B";
-    let response = client
-        .private
-        .unwrap()
-        .get_account(test_address)
-        .await
-        .unwrap();
-    dbg!(response);
+    let private = &client.private.unwrap();
 
-     let datetime_now: DateTime<Utc> = Utc::now();
-                                let expiration = datetime_now + Duration::minutes(3);
-                                let expiration_unix = expiration.timestamp();
+    let response = private.get_account("YOUR-ETHEREUM-ADDRESS").await.unwrap();
+    dbg!(&response);
 
-                                let order_params = ApiOrderParams {
-                                        position_id: 62392,
-                                        market: DydxMarket::BTC_USD,
-                                        side: OrderSide::BUY,
-                                        type_field: OrderType::MARKET,
-                                        time_in_force: TimeInForce::FOK,
-                                        post_only: false,
-                                        size: "0.01",
-                                        price: "100000",
-                                        limit_fee: "0.1",
-                                        cancel_id: None,
-                                        trigger_price: None,
-                                        trailing_percent: None,
-                                        expiration: expiration_unix,
-                                };
-                                let order = DydxClient().private.unwrap().create_order(order_params).await.unwrap();
-                                dbg!(order);
+    let datetime_now: DateTime<Utc> = Utc::now();
+    let expiration = datetime_now + Duration::minutes(3);
+    let expiration_unix = expiration.timestamp();
+
+    let position_id = response.account.position_id.as_str();
+
+    let order_params = ApiOrderParams {
+        position_id: position_id,
+        market: DydxMarket::BTC_USD,
+        side: OrderSide::BUY,
+        type_field: OrderType::MARKET,
+        time_in_force: TimeInForce::FOK,
+        post_only: false,
+        size: "0.01",
+        price: "100000",
+        limit_fee: "0.1",
+        cancel_id: None,
+        trigger_price: None,
+        trailing_percent: None,
+        expiration: expiration_unix,
+    };
+    let order = private.create_order(order_params).await.unwrap();
+    dbg!(order);
 }
 ```
 
 see more examples in tests folder
 
-If you send new orders or withdrawals, you need python shared library to generate DYDX-SIGNATURE through [PyO3](https://github.com/PyO3/pyo3).
+To call following API, you need python shared library to generate signature through [PyO3](https://github.com/PyO3/pyo3).
+
+- Create a new order or Withdraw API which requires STARK signature
+- onboarding or ethPrivate(apiKeys) module's API which requires EIP-712-compliant Ethereum signature
 
 Here is sample installation steps via pyenv
 
