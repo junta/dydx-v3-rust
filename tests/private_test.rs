@@ -27,7 +27,7 @@ speculate! {
                                 api_timeout: None,
                                 api_key_credentials: Some(api_key),
                                 stark_private_key: Some("039dd31bce09db7330e9fce956f111a5e9fc2be2e2aaecb065f05e8a42fcbca4"),
-                                web3: None,
+                                // web3: None,
                                 eth_private_key: None
                         };
                         // DydxClient::new("https://api.dydx.exchange", Some(options))
@@ -45,6 +45,13 @@ speculate! {
                                 let uuid = get_account_id("0x0De1C59f3AA4938B0bDcC070B4Fa9F395A4D6d25");
                                 // println!("{:?}", response);
                                 // dbg!(uuid);
+                        });
+                }
+
+                it "getApiKeys" {
+                        b!(async {
+                                let response = DydxClient().private.unwrap().get_api_keys().await.unwrap();
+                                dbg!(response);
                         });
                 }
 
@@ -70,7 +77,7 @@ speculate! {
                                                 api_timeout: None,
                                                 api_key_credentials: Some(api_key),
                                                 stark_private_key: Some("0657eaa201ba872f72c0e6e2db278d8cda1b60de4313f02213aaf2b3421bff56"),
-                                                web3: None,
+                                                // web3: None,
                                                 eth_private_key: None
                                         };
                                         // DydxClient::new("https://api.dydx.exchange", Some(options))

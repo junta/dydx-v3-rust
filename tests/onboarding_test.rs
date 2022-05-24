@@ -23,29 +23,29 @@ speculate! {
                         dotenv().ok();
                         let transport = web3::transports::Http::new("https://mainnet.infura.io/v3/ce7426bf07f24fd59a2f7bbb6df217b4").unwrap();
                         let web3 = web3::Web3::new(transport);
-                        let eth_private_key = env::var("PRIVATE_KEY").expect("PRIVATE_KEY must be set");
+                        // let eth_private_key = env::var("PRIVATE_KEY").expect("PRIVATE_KEY must be set");
                         let options = ClientOptions {
                                 network_id: Some(3),
                                 api_timeout: None,
                                 api_key_credentials: None,
                                 stark_private_key: None,
-                                web3: Some(web3),
-                                eth_private_key: Some(eth_private_key),
+                                // web3: Some(web3),
+                                eth_private_key: Some("2d06e246aaac1458ca0712e3faac6cacd2ed35bda0853998a80568948a3e3b46"),
                         };
                         // DydxClient::new("https://api.dydx.exchange", Some(options))
                         DydxClient::new("https://api.stage.dydx.exchange", options)
 
                 }
 
-                it "getOnboarding" {
-                        b!(async {
-                                let sign = dydx_v3_rust::OnboardingAction {
-                                        network_id: "1"
-                                };
+                // it "getOnboarding" {
+                //         b!(async {
+                //                 let sign = dydx_v3_rust::OnboardingAction {
+                //                         network_id: "1"
+                //                 };
 
-                                // dbg!(signature);
-                        });
-                }
+                //                 // dbg!(signature);
+                //         });
+                // }
                 it "createUser" {
                         b!(async {
                                 let userData = CreateUserParams {

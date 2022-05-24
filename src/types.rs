@@ -3,10 +3,27 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 #[derive(Debug, Clone, Deserialize)]
-pub struct ApiKeyCredentialsResponse {
+pub struct ApiKeyCredentialsResponseObject {
     pub key: String,
     pub secret: String,
     pub passphrase: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ApiKeyCredentialsResponse {
+    pub api_key: ApiKeyCredentialsResponseObject,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ApiKeysResponse {
+    pub api_keys: Vec<ApiKeyResponseObject>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct ApiKeyResponseObject {
+    pub key: String,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -446,6 +463,17 @@ pub struct AccountObject {
     pub account_number: String,
     pub id: String,
     pub quote_balance: String,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RecoveryResponse {
+    pub stark_key: String,
+    pub position_id: String,
+    pub quote_balance: String,
+    pub positions: Vec<PositionResponseObject>,
+    pub equity: String,
+    pub free_collateral: String,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Deserialize)]

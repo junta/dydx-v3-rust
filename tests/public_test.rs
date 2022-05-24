@@ -4,13 +4,10 @@ macro_rules! b {
         };
 }
 
-use dydx_v3_rust::helper::*;
+#[cfg(test)]
 use dydx_v3_rust::types::*;
 use dydx_v3_rust::ClientOptions;
-#[cfg(test)]
 use dydx_v3_rust::DydxClient;
-
-// use serde_json::json;
 use speculate::speculate;
 
 speculate! {
@@ -22,7 +19,6 @@ speculate! {
                                 api_timeout: None,
                                 api_key_credentials: None,
                                 stark_private_key: None,
-                                web3: None,
                                 eth_private_key: None
                         };
                         DydxClient::new("https://api.dydx.exchange", options)
@@ -173,6 +169,13 @@ speculate! {
                 it "verifyEmail" {
                         b!(async {
                                 let response = DydxClient().public.verify_email("aaa").await.unwrap();
+                                // dbg!(response);
+                        });
+                }
+
+                it "testEnv" {
+                        b!(async {
+                                let response = DydxClient().public.testEnv();
                                 // dbg!(response);
                         });
                 }

@@ -13,8 +13,8 @@ pub struct ClientOptions<'a> {
     pub api_timeout: Option<usize>,
     pub api_key_credentials: Option<ApiKeyCredentials<'a>>,
     pub stark_private_key: Option<&'a str>,
-    pub web3: Option<web3::Web3<Http>>,
-    pub eth_private_key: Option<String>,
+    // pub web3: Option<web3::Web3<Http>>,
+    pub eth_private_key: Option<&'a str>,
 }
 
 #[readonly::make]
@@ -52,12 +52,9 @@ impl DydxClient<'_> {
                 )),
                 None => None,
             },
-            eth_private: match _options.web3 {
+            eth_private: match _options.eth_private_key {
                 Some(v) => Some(EthPrivate::new(
-                    host,
-                    network_id,
-                    v,
-                    _options.eth_private_key.as_ref().unwrap(),
+                    host, network_id, v, // _options.eth_private_key.as_ref().unwrap(),
                 )),
                 None => None,
             },

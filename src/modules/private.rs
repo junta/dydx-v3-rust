@@ -40,6 +40,13 @@ impl Private<'_> {
         }
     }
 
+    pub async fn get_api_keys(&self) -> Result<ApiKeysResponse> {
+        let response = self
+            .request("api-keys", Method::GET, Vec::new(), json!({}))
+            .await;
+        response
+    }
+
     pub async fn get_account(&self, ethereum_address: &str) -> Result<AccountResponse> {
         let account_id = get_account_id(ethereum_address);
         let path = format!("accounts/{}", account_id);
