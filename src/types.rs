@@ -33,11 +33,13 @@ pub struct ApiKeyCredentials<'a> {
     pub passphrase: &'a str,
 }
 
-// pub struct KeyPair<'a> {
-//     pub public_key: &'a str,
-//     pub public_key_ycoordinate: &'a str,
-//     pub private_key: &'a str,
-// }
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct KeyPairWithYCoordinate<'a> {
+    pub public_key: &'a str,
+    pub public_key_y_coordinate: &'a str,
+    pub private_key: &'a str,
+}
 
 #[non_exhaustive]
 #[derive(Debug, Clone, Deserialize)]
@@ -709,4 +711,12 @@ pub struct ApiFastWithdrawalParams<'a> {
     pub to_address: &'a str,
     pub lp_position_id: &'a str,
     pub expiration: i64,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CreateUserResponse {
+    pub api_key: ApiKeyCredentialsResponseObject,
+    pub user: UserResponseObject,
+    pub account: AccountObject,
 }

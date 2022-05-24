@@ -28,7 +28,6 @@ async fn main() {
         api_timeout: None,
         api_key_credentials: None,
         stark_private_key: None,
-        web3: None,
         eth_private_key: None,
     };
     let client = DydxClient::new("https://api.dydx.exchange", options);
@@ -61,7 +60,6 @@ async fn main() {
         api_timeout: None,
         api_key_credentials: Some(api_key),
         stark_private_key: Some("YOUR-STARK-PRIVATE-KEY"),
-        web3: None,
         eth_private_key: None,
     };
     let client = DydxClient::new("https://api.dydx.exchange", options);

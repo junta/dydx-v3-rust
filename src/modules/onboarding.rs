@@ -1,9 +1,8 @@
-use super::super::helper::*;
 pub use super::super::types::*;
 use super::super::{ResponseError, Result};
+use super::eth_sign::*;
 use chrono::Utc;
 use http::{Method, StatusCode};
-use reqwest::RequestBuilder;
 use serde::Deserialize;
 use serde::Serialize;
 use serde_json::*;
@@ -35,11 +34,23 @@ impl Onboarding<'_> {
         &self,
         params: CreateUserParams<'_>,
         ethereum_address: &str,
-    ) -> Result<ApiKeyCredentialsResponse> {
+    ) -> Result<CreateUserResponse> {
         let path = "onboarding";
         let response = self.request(path, ethereum_address, params).await;
         response
     }
+
+    // pub fn derive_stark_key(&self, ethereum_address: &str) -> Result<KeyPairWithYCoordinate> {
+    //     let action = "dYdX STARK Key";
+    //     let signature = sign_onboarding(
+    //         self.network_id,
+    //         ethereum_address,
+    //         action,
+    //         self.eth_private_key,
+    //     )
+    //     .unwrap();
+    //     response
+    // }
 
     async fn request<T: for<'de> Deserialize<'de>, V: Serialize>(
         &self,
@@ -47,18 +58,15 @@ impl Onboarding<'_> {
         ethereum_address: &str,
         data: V,
     ) -> Result<T> {
-        let json_v = to_value(&data).unwrap();
+        let action = "dYdX Onboarding";
 
-        // let signature = self.sign(
-        //     request_path.as_str(),
-        //     method.as_str(),
-        //     &iso_timestamp,
-        //     Some(json.as_str()),
-        // );
-
-        let signature = String::from("0x2eb4c584446a01b332f608712d0f3193cf10332bc78367479c707bdd1e15f8b565c3b9507421c86a1ac2e5dd03a6e19f3676293c0d2db3b52252bdc529a6e7d61b01");
-
-        dbg!(&signature);
+        let signature = sign_onboarding(
+            self.network_id,
+            ethereum_address,
+            action,
+            self.eth_private_key,
+        )
+        .unwrap();
 
         let url = format!("{}/v3/{}", &self.host, path);
 
@@ -67,7 +75,7 @@ impl Onboarding<'_> {
         let req_builder = req_builder
             .header("DYDX-SIGNATURE", signature.as_str())
             .header("DYDX-ETHEREUM-ADDRESS", ethereum_address)
-            .json(&json_v);
+            .json(&data);
 
         let response = req_builder.send().await;
 
