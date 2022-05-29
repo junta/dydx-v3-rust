@@ -1,6 +1,7 @@
 from request_helpers import iso_to_epoch_seconds
 from starkex.order import SignableOrder
 from starkex.withdrawal import SignableWithdrawal
+from starkex.conditional_transfer import SignableConditionalTransfer
 
 
 def sign_order(network_id, maraket, side, position_id, human_size, human_price, limit_fee, client_id, expiration_epoch_seconds, private_key):
@@ -10,5 +11,10 @@ def sign_order(network_id, maraket, side, position_id, human_size, human_price, 
 
 def sign_withdraw(network_id, position_id, human_size, client_id, expiration_epoch_seconds, private_key):
     withdraw = SignableWithdrawal(network_id, position_id, human_size, client_id, expiration_epoch_seconds)
+    signature = withdraw.sign(private_key)
+    return signature
+
+def sign_fast_withdraw(network_id, sender_position_id, receiver_position_id, receiver_public_key, fact_registry_address, fact, human_amount, client_id, expiration_epoch_seconds, private_key):
+    withdraw = SignableConditionalTransfer(network_id, sender_position_id, receiver_position_id, receiver_public_key, fact_registry_address, fact, human_amount, client_id, expiration_epoch_seconds)
     signature = withdraw.sign(private_key)
     return signature

@@ -205,13 +205,6 @@ pub struct GetTimeResponse {
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct RetroactiveMiningRewardsResponse {
-    pub allocation: String,
-    pub target_volume: String,
-}
-
-#[derive(Debug, Clone, Deserialize)]
-#[serde(rename_all = "camelCase")]
 pub struct CurrentlyRevealedHedgies {
     pub daily: HedgiePeriodResponseObject,
     pub weekly: HedgiePeriodResponseObject,
@@ -556,6 +549,215 @@ pub struct OrderResponse {
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
+pub struct OrdersResponse {
+    pub orders: Vec<OrderResponseObject>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ActiveOrdersResponse {
+    pub orders: Vec<ActiveOrderResponseObject>,
+}
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ActiveOrderResponseObject {
+    pub id: String,
+    pub account_id: String,
+    pub market: String,
+    pub side: String,
+    pub price: String,
+    pub remaining_size: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct FillsResponse {
+    pub fills: Vec<FillResponseObject>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct FundingResponse {
+    pub funding_payments: Vec<FundingResponseObject>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct HistoricalPnlResponse {
+    pub historical_pnl: Vec<HistoricalPnlResponseObject>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct HistoricalPnlResponseObject {
+    pub equity: String,
+    pub total_pnl: String,
+    pub created_at: String,
+    pub net_transfers: String,
+    pub account_id: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct FundingResponseObject {
+    pub market: String,
+    pub payment: String,
+    pub rate: String,
+    pub position_size: String,
+    pub price: String,
+    pub effective_at: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TradingRewardsResponse {
+    pub epoch: u16,
+    pub epoch_start: String,
+    pub epoch_end: String,
+    pub fees: Fees,
+    pub open_interest: OpenInterest,
+    pub weight: Weight,
+    #[serde(rename = "stakedDYDX")]
+    pub staked_dydx: StakedDYDX,
+    pub total_rewards: String,
+    pub estimated_rewards: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Weight {
+    pub weight: String,
+    pub total_weight: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Fees {
+    pub fees_paid: String,
+    pub total_fees_paid: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct OpenInterest {
+    pub average_open_interest: String,
+    pub total_average_open_interest: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct LiquidityProviderRewardsResponse {
+    pub epoch: u16,
+    pub epoch_start: String,
+    pub epoch_end: String,
+    pub markets: HashMap<String, LiquidityRewards>,
+    #[serde(rename = "stakedDYDX")]
+    pub staked_dydx: LiqStakedDYDX,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct LiquidityRewards {
+    pub market: String,
+    pub depth_spread_score: String,
+    pub uptime: String,
+    pub max_uptime: String,
+    pub score: String,
+    pub total_score: String,
+    pub maker_volume: String,
+    pub total_maker_volume: String,
+    pub total_rewards: String,
+    pub estimated_rewards: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct LiqStakedDYDX {
+    #[serde(rename = "averageStakedDYDX")]
+    pub average_staked_dydx: String,
+    #[serde(rename = "totalAverageStakedDYDX")]
+    pub total_average_staked_dydx: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct StakedDYDX {
+    #[serde(rename = "averageStakedDYDX")]
+    pub average_staked_dydx: String,
+    #[serde(rename = "averageStakedDYDXWithFloor")]
+    pub average_staked_dydxwith_floor: String,
+    #[serde(rename = "totalAverageStakedDYDX")]
+    pub total_average_staked_dydx: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RetroactiveMiningRewardsResponse {
+    pub epoch: u16,
+    pub epoch_start: String,
+    pub epoch_end: String,
+    pub retroactive_mining: RetroactiveMiningRewardsResponseObject,
+    pub estimated_rewards: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RetroactiveMiningRewardsResponseObject {
+    pub allocation: String,
+    pub target_volume: String,
+    pub volume: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct FillResponseObject {
+    pub id: String,
+    pub side: String,
+    pub liquidity: String,
+    #[serde(rename = "type")]
+    pub type_field: String,
+    pub market: String,
+    pub order_id: String,
+    pub price: String,
+    pub size: String,
+    pub fee: String,
+    pub created_at: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct RegistrationResponse {
+    pub signature: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AccountPnlsResponse {
+    pub absolute_pnl: String,
+    pub percent_pnl: String,
+    pub absolute_rank: Option<String>,
+    pub percent_rank: Option<String>,
+    pub started_at: Option<String>,
+    pub ends_at: Option<String>,
+    pub updated_at: String,
+    pub period: String,
+    pub season_expected_outcome: Option<String>,
+    pub season_number: Option<String>,
+    pub hedgie_won: Option<String>,
+    pub prize_won: Option<String>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct HistoricalLeaderboardPnlsResponse {
+    pub leaderboard_pnls: Vec<AccountPnlsResponse>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct HistoricalLeaderboardPnlsResponseObject {}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct OrderResponseObject {
     pub id: String,
     pub client_id: Option<String>,
@@ -581,7 +783,13 @@ pub struct OrderResponseObject {
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CancelOrderResponse {
-    pub cancel_orders: Vec<OrderResponse>,
+    pub cancel_order: OrderResponseObject,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CancelOrdersResponse {
+    pub cancel_orders: Vec<OrderResponseObject>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -684,6 +892,17 @@ pub struct CreateAccountParams<'a> {
 
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
+pub struct TransferParams<'a> {
+    pub amount: &'a str,
+    pub position_id: &'a str,
+    pub receiver_account_id: &'a str,
+    pub receiver_public_key: &'a str,
+    pub receiver_position_id: &'a str,
+    pub expiration: i64,
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ApiWithdrawParams<'a> {
     pub position_id: &'a str,
     pub amount: &'a str,
@@ -710,7 +929,21 @@ pub struct ApiFastWithdrawalParams<'a> {
     pub debit_amount: &'a str,
     pub to_address: &'a str,
     pub lp_position_id: &'a str,
+    pub lp_stark_key: &'a str,
     pub expiration: i64,
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ApiFastWithdrawal<'a> {
+    pub credit_asset: &'a str,
+    pub credit_amount: &'a str,
+    pub debit_amount: &'a str,
+    pub to_address: &'a str,
+    pub lp_position_id: &'a str,
+    pub expiration: &'a str,
+    pub client_id: &'a str,
+    pub signature: &'a str,
 }
 
 #[derive(Debug, Clone, Deserialize)]

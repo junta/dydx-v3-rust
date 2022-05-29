@@ -1,12 +1,12 @@
 pub use super::super::types::*;
 use super::super::{ResponseError, Result};
 use super::eth_sign::*;
+use byteorder::{BigEndian, ByteOrder, LittleEndian, NativeEndian};
 use chrono::Utc;
 use http::{Method, StatusCode};
 use serde::Deserialize;
 use serde::Serialize;
 use serde_json::*;
-
 use std::time::Duration;
 
 #[derive(Debug, Clone)]
@@ -40,17 +40,63 @@ impl Onboarding<'_> {
         response
     }
 
-    // pub fn derive_stark_key(&self, ethereum_address: &str) -> Result<KeyPairWithYCoordinate> {
-    //     let action = "dYdX STARK Key";
-    //     let signature = sign_onboarding(
-    //         self.network_id,
-    //         ethereum_address,
-    //         action,
-    //         self.eth_private_key,
-    //     )
-    //     .unwrap();
-    //     response
-    // }
+    pub fn derive_stark_key(&self, ethereum_address: &str) -> Result<String> {
+        let action = "dYdX STARK Key";
+        let signature = sign_onboarding(
+            self.network_id,
+            ethereum_address,
+            action,
+            self.eth_private_key,
+        )
+        .unwrap();
+        let stark_private_key = derive_stark_private_key(signature).unwrap();
+        Ok(stark_private_key)
+    }
+
+    pub fn recover_default_api_key_credentials(
+        &self,
+        ethereum_address: &str,
+    ) -> Result<ApiKeyCredentialsResponseObject> {
+        let action = "dYdX Onboarding";
+        let signature = sign_onboarding(
+            self.network_id,
+            ethereum_address,
+            action,
+            self.eth_private_key,
+        )
+        .unwrap();
+        println!("{}", signature);
+        let sig_str = signature.as_str();
+        let r_hex = &sig_str[2..66];
+        dbg!(&r_hex);
+
+        // let r_byte = hex::decode(r_hex).unwrap();
+        // dbg!(&r_byte);
+        // dbg!(&r_byte.len());
+        // let r_int = NativeEndian::read_u32(&r_byte);
+        // dbg!(&r_int);
+        let secret = derive_secret(r_hex.to_string()).unwrap();
+        let s_hex = &sig_str[66..130];
+        dbg!(&s_hex);
+        let passphrase = derive_passphrase(s_hex.to_string()).unwrap();
+        dbg!(&passphrase);
+        let key = derive_key(s_hex.to_string()).unwrap();
+        dbg!(&key);
+        // let r_hashed_byte = r_hashed.as_bytes();
+        // dbg!(&r_hashed);
+        // let secret_bytes = &r_hashed[..=70];
+        // let (secret_bytes, v2) = r_hashed_byte.split_at(30);
+        // dbg!(secret_bytes);
+        // let secret = base64::encode_config(&secret_bytes, base64::URL_SAFE);
+        // dbg!(&secret);
+
+        let api_key = ApiKeyCredentialsResponseObject {
+            key: key,
+            secret: secret,
+            passphrase: passphrase,
+        };
+        Ok(api_key)
+    }
 
     async fn request<T: for<'de> Deserialize<'de>, V: Serialize>(
         &self,

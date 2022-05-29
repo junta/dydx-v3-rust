@@ -1,8 +1,7 @@
 use dydx_v3_rust::modules::stark_sign::*;
-
-#[cfg(test)]
 use speculate::speculate;
 
+#[cfg(test)]
 speculate! {
         describe "starkTest" {
                 it "signOrder" {

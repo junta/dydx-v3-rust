@@ -65,7 +65,7 @@ impl EthPrivate<'_> {
 
         let request_path = format!("/v3/{}", path);
 
-        let signature = sign(
+        let signature = sign_private(
             self.network_id,
             ethereum_address,
             method.as_str(),
@@ -126,7 +126,7 @@ impl EthPrivate<'_> {
         };
         let iso_timestamp = Utc::now().format("%Y-%m-%dT%H:%M:%S%.3fZ").to_string();
 
-        let signature = sign(
+        let signature = sign_private(
             self.network_id,
             ethereum_address,
             "DELETE",

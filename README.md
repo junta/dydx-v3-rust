@@ -96,7 +96,7 @@ async fn main() {
 
 see more examples in tests folder
 
-To call following API, you need python shared library to generate signature through [PyO3](https://github.com/PyO3/pyo3).
+To call following API, you need python shared library to generate signature through [PyO3](https://github.com/PyO3/pyo3) and web3.py.
 
 - Create a new order or Withdraw API which requires STARK signature
 - onboarding or ethPrivate(apiKeys) module's API which requires EIP-712-compliant Ethereum signature
@@ -116,6 +116,12 @@ $ source ~/.bash_profile
 # install python3.9.9 with shared-library
 env PYTHON_CONFIGURE_OPTS="--enable-shared" pyenv install 3.9.9
 pyenv local 3.9.9
+```
+
+Then install web3.py by pip
+
+```sh
+pip install web3
 ```
 
 Full installation guide: https://github.com/pyenv/pyenv#set-up-your-shell-environment-for-pyenv

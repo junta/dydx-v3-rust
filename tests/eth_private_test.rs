@@ -4,11 +4,11 @@ macro_rules! b {
         };
 }
 
-#[cfg(test)]
 use dydx_v3_rust::ClientOptions;
 use dydx_v3_rust::DydxClient;
 use speculate::speculate;
 
+#[cfg(test)]
 speculate! {
         describe "ethPrivateTest" {
                 fn DydxClient() -> DydxClient<'static> {

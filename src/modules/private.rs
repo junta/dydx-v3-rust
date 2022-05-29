@@ -40,6 +40,20 @@ impl Private<'_> {
         }
     }
 
+    pub async fn get_registration(&self) -> Result<RegistrationResponse> {
+        let response = self
+            .request("registration", Method::GET, Vec::new(), json!({}))
+            .await;
+        response
+    }
+
+    pub async fn get_user(&self) -> Result<UserResponse> {
+        let response = self
+            .request("users", Method::GET, Vec::new(), json!({}))
+            .await;
+        response
+    }
+
     pub async fn get_api_keys(&self) -> Result<ApiKeysResponse> {
         let response = self
             .request("api-keys", Method::GET, Vec::new(), json!({}))
@@ -80,6 +94,42 @@ impl Private<'_> {
 
         let response = self
             .request("accounts", Method::POST, Vec::new(), data)
+            .await;
+        response
+    }
+
+    pub async fn get_account_leaderboard_pnl(
+        &self,
+        period: &str,
+        starting_before_or_at: Option<&str>,
+    ) -> Result<AccountPnlsResponse> {
+        let path = format!("accounts/leaderboard-pnl/{}", period);
+
+        let mut parameters = Vec::new();
+        if let Some(local_var) = starting_before_or_at {
+            parameters.push(("startingBeforeOrAt", local_var));
+        }
+
+        let response = self
+            .request(path.as_str(), Method::GET, parameters, json!({}))
+            .await;
+        response
+    }
+
+    pub async fn get_historical_leaderboard_pnls(
+        &self,
+        period: &str,
+        limit: Option<&str>,
+    ) -> Result<HistoricalLeaderboardPnlsResponse> {
+        let path = format!("accounts/historical-leaderboard-pnls/{}", period);
+
+        let mut parameters = Vec::new();
+        if let Some(local_var) = limit {
+            parameters.push(("limit", local_var));
+        }
+
+        let response = self
+            .request(path.as_str(), Method::GET, parameters, json!({}))
             .await;
         response
     }
@@ -188,6 +238,56 @@ impl Private<'_> {
         response
     }
 
+    pub async fn create_fast_withdraw(
+        &self,
+        user_params: ApiFastWithdrawalParams<'_>,
+    ) -> Result<WithdrawalResponse> {
+        let client_id = generate_random_client_id();
+        let nonce = nonce_from_client_id(&client_id);
+        let fact = get_transfer_erc20_fact(
+            user_params.to_address,
+            6,
+            user_params.credit_amount,
+            "0x8707A5bf4C2842d46B31A405Ba41b858C0F876c4",
+            nonce,
+        );
+
+        let signature = sign_fast_withdraw(
+            self.network_id,
+            user_params.position_id,
+            user_params.lp_position_id,
+            user_params.lp_stark_key,
+            "0x8Fb814935f7E63DEB304B500180e19dF5167B50e",
+            fact,
+            user_params.credit_amount,
+            &client_id,
+            user_params.expiration,
+            self.stark_private_key.unwrap(),
+        )
+        .unwrap();
+        dbg!(&signature);
+
+        let naive = NaiveDateTime::from_timestamp(user_params.expiration, 0);
+        let datetime: DateTime<Utc> = DateTime::from_utc(naive, Utc);
+        let expiration_second = datetime.format("%Y-%m-%dT%H:%M:%S%.3fZ").to_string();
+
+        let parameters = ApiFastWithdrawal {
+            credit_asset: user_params.credit_asset,
+            credit_amount: user_params.credit_amount,
+            debit_amount: user_params.debit_amount,
+            to_address: user_params.to_address,
+            lp_position_id: user_params.lp_position_id,
+            expiration: expiration_second.as_str(),
+            client_id: client_id.as_str(),
+            signature: signature.as_str(),
+        };
+
+        let response = self
+            .request("fast-withdrawals", Method::POST, Vec::new(), parameters)
+            .await;
+        response
+    }
+
     pub async fn get_transfers(
         &self,
         transfer_type: &str,
@@ -207,13 +307,197 @@ impl Private<'_> {
         response
     }
 
-    pub async fn cancel_all_orders(&self, market: Option<&str>) -> Result<CancelOrderResponse> {
+    pub async fn cancel_order(&self, order_id: &str) -> Result<CancelOrderResponse> {
+        let path = format!("orders/{}", order_id);
+        let response = self
+            .request(path.as_str(), Method::DELETE, Vec::new(), json!({}))
+            .await;
+        response
+    }
+
+    pub async fn cancel_all_orders(&self, market: Option<&str>) -> Result<CancelOrdersResponse> {
         let mut parameters = Vec::new();
         if let Some(local_var) = market {
             parameters.push(("market", local_var));
         }
         let response = self
             .request("orders", Method::DELETE, parameters, json!({}))
+            .await;
+        response
+    }
+
+    pub async fn get_orders(
+        &self,
+        market: Option<&str>,
+        status: Option<&str>,
+        side: Option<&str>,
+        type_field: Option<&str>,
+        limit: Option<&str>,
+        created_before_or_at: Option<&str>,
+        return_latest_orders: Option<&str>,
+    ) -> Result<OrdersResponse> {
+        let mut parameters = Vec::new();
+        if let Some(local_var) = market {
+            parameters.push(("market", local_var));
+        }
+        if let Some(local_var) = status {
+            parameters.push(("status", local_var));
+        }
+        if let Some(local_var) = side {
+            parameters.push(("side", local_var));
+        }
+        if let Some(local_var) = type_field {
+            parameters.push(("type", local_var));
+        }
+        if let Some(local_var) = limit {
+            parameters.push(("limit", local_var));
+        }
+        if let Some(local_var) = created_before_or_at {
+            parameters.push(("created_before_or_at", local_var));
+        }
+        if let Some(local_var) = return_latest_orders {
+            parameters.push(("return_latest_orders", local_var));
+        }
+        let response = self
+            .request("orders", Method::GET, Vec::new(), json!({}))
+            .await;
+        response
+    }
+
+    pub async fn get_active_orders(
+        &self,
+        market: &str,
+        side: Option<&str>,
+        id: Option<&str>,
+    ) -> Result<ActiveOrdersResponse> {
+        let mut parameters = vec![("market", market)];
+        if let Some(local_var) = side {
+            parameters.push(("side", local_var));
+        }
+        if let Some(local_var) = id {
+            parameters.push(("id", local_var));
+        }
+        let response = self
+            .request("active-orders", Method::GET, parameters, json!({}))
+            .await;
+        response
+    }
+
+    pub async fn get_order_by_id(&self, id: &str) -> Result<OrderResponse> {
+        let path = format!("orders/{}", id);
+        let response = self
+            .request(path.as_str(), Method::GET, Vec::new(), json!({}))
+            .await;
+        response
+    }
+
+    pub async fn get_order_by_client_id(&self, id: &str) -> Result<OrderResponse> {
+        let path = format!("orders/client/{}", id);
+        let response = self
+            .request(path.as_str(), Method::GET, Vec::new(), json!({}))
+            .await;
+        response
+    }
+
+    pub async fn get_fills(
+        &self,
+        market: Option<&str>,
+        order_id: Option<&str>,
+        limit: Option<&str>,
+        created_before_or_at: Option<&str>,
+    ) -> Result<FillsResponse> {
+        let mut parameters = Vec::new();
+        if let Some(local_var) = market {
+            parameters.push(("market", local_var));
+        }
+        if let Some(local_var) = order_id {
+            parameters.push(("orderId", local_var));
+        }
+        if let Some(local_var) = limit {
+            parameters.push(("limit", local_var));
+        }
+        if let Some(local_var) = created_before_or_at {
+            parameters.push(("createdBeforeOrAt", local_var));
+        }
+        let response = self
+            .request("fills", Method::GET, parameters, json!({}))
+            .await;
+        response
+    }
+
+    pub async fn get_funding_payments(
+        &self,
+        market: Option<&str>,
+        limit: Option<&str>,
+        effective_before_or_at: Option<&str>,
+    ) -> Result<FundingResponse> {
+        let mut parameters = Vec::new();
+        if let Some(local_var) = market {
+            parameters.push(("market", local_var));
+        }
+        if let Some(local_var) = limit {
+            parameters.push(("limit", local_var));
+        }
+        if let Some(local_var) = effective_before_or_at {
+            parameters.push(("effectiveBeforeOrAt", local_var));
+        }
+        let response = self
+            .request("funding", Method::GET, parameters, json!({}))
+            .await;
+        response
+    }
+
+    pub async fn get_historical_pnl(
+        &self,
+        effective_before_or_at: Option<&str>,
+        effective_at_or_after: Option<&str>,
+    ) -> Result<HistoricalPnlResponse> {
+        let mut parameters = Vec::new();
+        if let Some(local_var) = effective_before_or_at {
+            parameters.push(("effectiveBeforeOrAt", local_var));
+        }
+        if let Some(local_var) = effective_at_or_after {
+            parameters.push(("effectiveAtOrAfter", local_var));
+        }
+        let response = self
+            .request("historical-pnl", Method::GET, parameters, json!({}))
+            .await;
+        response
+    }
+
+    pub async fn get_trading_rewards(&self, epoch: Option<&str>) -> Result<TradingRewardsResponse> {
+        let mut parameters = Vec::new();
+        if let Some(local_var) = epoch {
+            parameters.push(("epoch", local_var));
+        }
+        let response = self
+            .request("rewards/weight", Method::GET, parameters, json!({}))
+            .await;
+        response
+    }
+
+    pub async fn get_liquidity_provider_rewards(
+        &self,
+        epoch: Option<&str>,
+    ) -> Result<LiquidityProviderRewardsResponse> {
+        let mut parameters = Vec::new();
+        if let Some(local_var) = epoch {
+            parameters.push(("epoch", local_var));
+        }
+        let response = self
+            .request("rewards/liquidity", Method::GET, parameters, json!({}))
+            .await;
+        response
+    }
+
+    pub async fn get_retroactive_mining_rewards(&self) -> Result<RetroactiveMiningRewardsResponse> {
+        let response = self
+            .request(
+                "rewards/retroactive-mining",
+                Method::GET,
+                Vec::new(),
+                json!({}),
+            )
             .await;
         response
     }
