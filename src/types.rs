@@ -348,6 +348,13 @@ impl DydxMarket {
     pub const DOT_USD: &'static str = "DOT-USD";
     pub const MATIC_USD: &'static str = "MATIC-USD";
     pub const ENJ_USD: &'static str = "ENJ-USD";
+    pub const NEAR_USD: &'static str = "NEAR-USD";
+    pub const LUNA_USD: &'static str = "LUNA-USD";
+    pub const CELO_USD: &'static str = "CELO-USD";
+    pub const XTZ_USD: &'static str = "XTZ-USD";
+    pub const RUNE_USD: &'static str = "RUNE-USD";
+    pub const TRX_USD: &'static str = "TRX-USD";
+    pub const ICP_USD: &'static str = "ICP-USD";
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Deserialize)]

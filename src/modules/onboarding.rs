@@ -68,27 +68,11 @@ impl Onboarding<'_> {
         println!("{}", signature);
         let sig_str = signature.as_str();
         let r_hex = &sig_str[2..66];
-        dbg!(&r_hex);
 
-        // let r_byte = hex::decode(r_hex).unwrap();
-        // dbg!(&r_byte);
-        // dbg!(&r_byte.len());
-        // let r_int = NativeEndian::read_u32(&r_byte);
-        // dbg!(&r_int);
         let secret = derive_secret(r_hex.to_string()).unwrap();
         let s_hex = &sig_str[66..130];
-        dbg!(&s_hex);
         let passphrase = derive_passphrase(s_hex.to_string()).unwrap();
-        dbg!(&passphrase);
         let key = derive_key(s_hex.to_string()).unwrap();
-        dbg!(&key);
-        // let r_hashed_byte = r_hashed.as_bytes();
-        // dbg!(&r_hashed);
-        // let secret_bytes = &r_hashed[..=70];
-        // let (secret_bytes, v2) = r_hashed_byte.split_at(30);
-        // dbg!(secret_bytes);
-        // let secret = base64::encode_config(&secret_bytes, base64::URL_SAFE);
-        // dbg!(&secret);
 
         let api_key = ApiKeyCredentialsResponseObject {
             key: key,
