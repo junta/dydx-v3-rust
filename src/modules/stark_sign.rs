@@ -107,7 +107,7 @@ pub fn sign_fast_withdraw(
     receiver_public_key: &str,
     fact_registry_address: &str,
     recipient: &str,
-    token_decimals: usize,
+    token_decimals: u8,
     human_amount: &str,
     token_address: &str,
     // salt: usize,

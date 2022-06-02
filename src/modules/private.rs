@@ -1,5 +1,6 @@
 use super::super::helper::*;
 use super::super::types::*;
+use super::super::constants::*;
 use super::super::{ResponseError, Result};
 use super::stark_sign::*;
 use chrono::prelude::*;
@@ -256,16 +257,19 @@ impl Private<'_> {
 
         // dbg!(&fact.as_str());
 
+        let fact_address = if self.network_id == 1 { FACT_REGISTRY_CONTRACT_MAINNET } else { FACT_REGISTRY_CONTRACT_ROPSTEN };
+        let token_address = if self.network_id == 1 { ASSET_USDC_CONTRACT_MAINNET } else { FACT_REGISTRY_CONTRACT_ROPSTEN };
+
         let signature = sign_fast_withdraw(
             self.network_id,
             user_params.position_id,
             user_params.lp_position_id,
             user_params.lp_stark_key,
-            "0x8Fb814935f7E63DEB304B500180e19dF5167B50e",
+            fact_address,
             user_params.to_address,
-            6,
+            COLLATERAL_TOKEN_DECIMALS,
             user_params.credit_amount,
-            "0x8707A5bf4C2842d46B31A405Ba41b858C0F876c4",
+            token_address,
             &client_id,
             user_params.expiration,
             self.stark_private_key.unwrap(),

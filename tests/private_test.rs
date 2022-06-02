@@ -192,7 +192,7 @@ speculate! {
                                         lp_stark_key: "04a9ecd28a67407c3cff8937f329ca24fd631b1d9ca2b9f2df47c7ebf72bf0b0",
                                         expiration: expiration_unix,
                                 };
-                                let _response = DydxClient().private.unwrap().create_fast_withdraw(withdraw_params).await.unwrap();
+                                let _response = DydxClient().private.unwrap().create_fast_withdraw(withdraw_params).await;
                                 // dbg!(_response);
                         });
                 }
