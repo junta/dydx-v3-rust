@@ -29,7 +29,7 @@ pub struct DydxClient<'a> {
 impl DydxClient<'_> {
     pub fn new<'a>(host: &'a str, _options: ClientOptions<'a>) -> DydxClient<'a> {
         let network_id = _options.network_id.unwrap_or(1);
-        let api_timeout = _options.api_timeout.unwrap_or(5);
+        let api_timeout = _options.api_timeout.unwrap_or(10);
         DydxClient {
             api_timeout: None,
             
