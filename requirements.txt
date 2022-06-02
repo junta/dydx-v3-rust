@@ -1,2 +1,2 @@
 web3 >= 5.29.2
-dateutil
+python-dateutil
