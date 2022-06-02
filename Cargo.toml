@@ -1,6 +1,6 @@
 [package]
 name = "dydx-v3-rust"
-version = "0.1.6"
+version = "0.1.7"
 edition = "2021"
 authors = ["0xIbuki"]
 description = "Rust SDK for dYdX v3 API"
