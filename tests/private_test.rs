@@ -208,7 +208,7 @@ speculate! {
                                         country: None
 
                                 };
-                                let _user = DydxClient().private.unwrap().update_user(userData).await.unwrap();
+                                let _user = DydxClient().private.unwrap().update_user(userData).await;
                                 // dbg!(_user);
                         });
                 }

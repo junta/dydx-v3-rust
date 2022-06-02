@@ -34,7 +34,7 @@ pub fn sign_private(
             ),
         )
     });
-    // println!("py: {}", from_python?);
+    
     Ok(from_python.unwrap().to_string())
 }
 
@@ -54,7 +54,7 @@ pub fn sign_onboarding(
             .into();
         app.call1(py, (network_id, ethereum_address, action, private_key))
     });
-    // println!("py: {}", from_python?);
+    
     Ok(from_python.unwrap().to_string())
 }
 
@@ -69,7 +69,7 @@ pub fn derive_stark_private_key(signature: String) -> PyResult<String> {
             .into();
         app.call1(py, (signature,))
     });
-    // println!("py: {}", from_python?);
+    
     Ok(from_python.unwrap().to_string())
 }
 
@@ -84,7 +84,7 @@ pub fn derive_secret(hex_value: String) -> PyResult<String> {
             .into();
         app.call1(py, (hex_value,))
     });
-    // println!("py: {}", from_python?);
+    
     Ok(from_python.unwrap().to_string())
 }
 
@@ -99,7 +99,7 @@ pub fn derive_passphrase(hex_value: String) -> PyResult<String> {
             .into();
         app.call1(py, (hex_value,))
     });
-    // println!("py: {}", from_python?);
+    
     Ok(from_python.unwrap().to_string())
 }
 
@@ -114,6 +114,6 @@ pub fn derive_key(hex_value: String) -> PyResult<String> {
             .into();
         app.call1(py, (hex_value,))
     });
-    // println!("py: {}", from_python?);
+    
     Ok(from_python.unwrap().to_string())
 }

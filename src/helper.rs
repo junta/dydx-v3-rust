@@ -23,17 +23,3 @@ pub fn generate_random_client_id() -> String {
     let rand_number: u32 = rng.gen();
     rand_number.to_string()
 }
-
-pub fn nonce_from_client_id(client_id: &String) -> usize {
-    4139413728
-}
-
-// pub fn get_transfer_erc20_fact(
-//     recipient: &str,
-//     token_decimals: u8,
-//     human_amount: &str,
-//     token_address: &str,
-//     salt: &str,
-// ) -> &'static str {
-//     "0x7a1c3a9df7ec4f86208db0fa3cab813e8e7baef05f201247ad38f19eda102d46"
-// }

@@ -1,4 +1,3 @@
-from request_helpers import iso_to_epoch_seconds
 from starkex.order import SignableOrder
 from starkex.withdrawal import SignableWithdrawal
 from starkex.conditional_transfer import SignableConditionalTransfer
@@ -15,7 +14,6 @@ def sign_withdraw(network_id, position_id, human_size, client_id, expiration_epo
     signature = withdraw.sign(private_key)
     return signature
 
-# def sign_fast_withdraw(network_id, sender_position_id, receiver_position_id, receiver_public_key, fact_registry_address, recipient, token_decimals, human_amount, token_address, salt, client_id, expiration_epoch_seconds, private_key):
 def sign_fast_withdraw(network_id, sender_position_id, receiver_position_id, receiver_public_key, fact_registry_address, recipient, token_decimals, human_amount, token_address, client_id, expiration_epoch_seconds, private_key):
     fact = get_transfer_erc20_fact(recipient, token_decimals, human_amount, token_address, nonce_from_client_id(client_id),)
     withdraw = SignableConditionalTransfer(network_id, sender_position_id, receiver_position_id, receiver_public_key, fact_registry_address, fact, human_amount, client_id, expiration_epoch_seconds)
@@ -51,6 +49,5 @@ def get_transfer_erc20_fact(
             salt,
         ],
     )
-    # return bytes(hex_bytes)
-    print(hex_bytes)
+
     return bytes(hex_bytes)

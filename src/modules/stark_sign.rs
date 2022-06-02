@@ -12,7 +12,6 @@ pub fn sign_order(
     human_price: &str,
     limit_fee: &str,
     client_id: &str,
-    // expiration_epoch_seconds: &str,
     expiration_epoch_seconds: i64,
     private_key: &str,
 ) -> PyResult<String> {
@@ -40,7 +39,7 @@ pub fn sign_order(
             ),
         )
     });
-    // println!("py: {}", from_python?);
+    
     Ok(from_python.unwrap().to_string())
 }
 
@@ -72,33 +71,9 @@ pub fn sign_withdraw(
             ),
         )
     });
-    // println!("py: {}", from_python?);
+
     Ok(from_python.unwrap().to_string())
 }
-
-// pub fn get_transfer_erc20_fact(
-//     recipient: &str,
-//     token_decimals: u8,
-//     human_amount: &str,
-//     token_address: &str,
-//     salt: usize,
-// ) -> PyResult<String> {
-//     let path = Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/src/stark/"));
-//     let py_app = fs::read_to_string(path.join("stark_sign.py"))?;
-//     let from_python = Python::with_gil(|py| -> PyResult<Py<PyAny>> {
-//         let syspath: &PyList = py.import("sys")?.getattr("path")?.downcast::<PyList>()?;
-//         syspath.insert(0, &path)?;
-//         let app: Py<PyAny> = PyModule::from_code(py, &py_app, "", "")?
-//             .getattr("get_transfer_erc20_fact")?
-//             .into();
-//         app.call1(
-//             py,
-//             (recipient, token_decimals, human_amount, token_address, salt),
-//         )
-//     });
-//     // println!("py: {}", from_python?);
-//     Ok(from_python.unwrap().to_string())
-// }
 
 pub fn sign_fast_withdraw(
     network_id: usize,
@@ -142,6 +117,6 @@ pub fn sign_fast_withdraw(
             ),
         )
     });
-    // println!("py: {}", from_python?);
+    
     Ok(from_python.unwrap().to_string())
 }

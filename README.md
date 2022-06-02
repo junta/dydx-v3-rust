@@ -60,7 +60,7 @@ async fn main() {
         api_timeout: None,
         api_key_credentials: Some(api_key),
         stark_private_key: Some("YOUR-STARK-PRIVATE-KEY"),
-        eth_private_key: None,
+        eth_private_key: None, // specify if you call onboarding or ethPrivate functions
     };
     let client = DydxClient::new("https://api.dydx.exchange", options);
     let private = &client.private.unwrap();
@@ -96,10 +96,10 @@ async fn main() {
 
 see more examples in tests folder
 
-To call following API, you need python shared library to generate signature through [PyO3](https://github.com/PyO3/pyo3) and web3.py.
+To call following APIs, you need python shared library to generate signature through [PyO3](https://github.com/PyO3/pyo3) and web3.py.
 
 - Create a new order or Withdraw API which requires STARK signature
-- onboarding or ethPrivate(apiKeys) module's API which requires EIP-712-compliant Ethereum signature
+- Onboarding or EthPrivate(apiKeys) module's API which requires EIP-712-compliant Ethereum signature
 
 Here is sample installation steps via pyenv
 
@@ -118,10 +118,16 @@ env PYTHON_CONFIGURE_OPTS="--enable-shared" pyenv install 3.9.9
 pyenv local 3.9.9
 ```
 
+Full installation guide: https://github.com/pyenv/pyenv#set-up-your-shell-environment-for-pyenv
+
 Then run pip install.
 
 ```sh
 pip install -r requirements.txt
 ```
 
-Full installation guide: https://github.com/pyenv/pyenv#set-up-your-shell-environment-for-pyenv
+## Run tests
+
+```sh
+cargo test
+```

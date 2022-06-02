@@ -243,20 +243,8 @@ impl Private<'_> {
         &self,
         user_params: ApiFastWithdrawalParams<'_>,
     ) -> Result<WithdrawalResponse> {
-        // let client_id = generate_random_client_id();
-        let client_id = "8113483921639613";
-        // let nonce = nonce_from_client_id(&client_id);
-        // let fact = get_transfer_erc20_fact(
-        //     user_params.to_address,
-        //     6,
-        //     user_params.credit_amount,
-        //     "0x8707A5bf4C2842d46B31A405Ba41b858C0F876c4",
-        //     nonce,
-        // )
-        // .unwrap();
-
-        // dbg!(&fact.as_str());
-
+        let client_id = generate_random_client_id();
+        
         let fact_address = if self.network_id == 1 { FACT_REGISTRY_CONTRACT_MAINNET } else { FACT_REGISTRY_CONTRACT_ROPSTEN };
         let token_address = if self.network_id == 1 { ASSET_USDC_CONTRACT_MAINNET } else { FACT_REGISTRY_CONTRACT_ROPSTEN };
 
@@ -275,7 +263,6 @@ impl Private<'_> {
             self.stark_private_key.unwrap(),
         )
         .unwrap();
-        dbg!(&signature);
 
         let naive = NaiveDateTime::from_timestamp(user_params.expiration, 0);
         let datetime: DateTime<Utc> = DateTime::from_utc(naive, Utc);
@@ -288,7 +275,7 @@ impl Private<'_> {
             to_address: user_params.to_address,
             lp_position_id: user_params.lp_position_id,
             expiration: expiration_second.as_str(),
-            client_id: client_id,
+            client_id: &client_id,
             signature: signature.as_str(),
         };
 
@@ -620,7 +607,6 @@ impl Private<'_> {
                 message.push_str(local_var);
             }
         }
-        // println!("{}", &message);
 
         let secret = self.api_key_credentials.secret;
         let secret = base64::decode_config(secret, base64::URL_SAFE).unwrap();
