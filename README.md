@@ -118,10 +118,10 @@ env PYTHON_CONFIGURE_OPTS="--enable-shared" pyenv install 3.9.9
 pyenv local 3.9.9
 ```
 
-Then install web3.py by pip
+Then run pip install.
 
 ```sh
-pip install web3
+pip install -r requirements.txt
 ```
 
 Full installation guide: https://github.com/pyenv/pyenv#set-up-your-shell-environment-for-pyenv
