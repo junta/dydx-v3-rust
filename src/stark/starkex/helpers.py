@@ -111,38 +111,6 @@ def nonce_from_client_id(client_id):
     return int(message.digest().hex(), 16) % NONCE_UPPER_BOUND_EXCLUSIVE
 
 
-def get_transfer_erc20_fact(
-    recipient,
-    token_decimals,
-    human_amount,
-    token_address,
-    salt,
-):
-    token_amount = float(human_amount) * (10 ** token_decimals)
-    if not token_amount.is_integer():
-        raise ValueError(
-            'Amount {} has more precision than token decimals {}'.format(
-                human_amount,
-                token_decimals,
-            )
-        )
-    hex_bytes = Web3.solidityKeccak(
-        [
-            'address',
-            'uint256',
-            'address',
-            'uint256',
-        ],
-        [
-            recipient,
-            int(token_amount),
-            token_address,
-            salt,
-        ],
-    )
-    return bytes(hex_bytes)
-
-
 def fact_to_condition(fact_registry_address, fact):
     """Generate the condition, signed as part of a conditional transfer."""
     if not isinstance(fact, bytes):

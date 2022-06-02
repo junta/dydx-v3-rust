@@ -15,10 +15,10 @@ pub struct EthPrivate<'a> {
 }
 
 impl EthPrivate<'_> {
-    pub fn new<'a>(host: &'a str, network_id: usize, eth_private_key: &'a str) -> EthPrivate<'a> {
+    pub fn new<'a>(host: &'a str, network_id: usize, api_timeout: u64, eth_private_key: &'a str) -> EthPrivate<'a> {
         EthPrivate {
             client: reqwest::ClientBuilder::new()
-                .timeout(Duration::from_secs(30))
+                .timeout(Duration::from_secs(api_timeout))
                 .build()
                 .expect("Client::new()"),
             host,
@@ -49,7 +49,6 @@ impl EthPrivate<'_> {
         api_key: &str,
         ethereum_address: &str,
     ) -> Result<StatusCode> {
-        dbg!(api_key);
         let parameter = vec![("apiKey", api_key)];
         let response = self.delete("api-keys", ethereum_address, parameter).await;
         response
@@ -97,7 +96,6 @@ impl EthPrivate<'_> {
                     return Ok(response.json::<T>().await.unwrap())
                 }
                 _ => {
-                    // println!("{}", response.text().await.unwrap());
                     let error = ResponseError {
                         code: response.status().to_string(),
                         message: response.text().await.unwrap(),
@@ -136,8 +134,6 @@ impl EthPrivate<'_> {
             self.eth_private_key,
         )
         .unwrap();
-
-        dbg!(&signature);
 
         let url = format!("{}/v3/{}", &self.host, path);
 

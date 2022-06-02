@@ -5,18 +5,19 @@ use std::time::Duration;
 
 pub use super::super::types::*;
 
+#[readonly::make]
 #[derive(Debug, Clone)]
 pub struct Public<'a> {
     client: reqwest::Client,
+    #[readonly]
     pub host: &'a str,
 }
 
 impl Public<'_> {
-    pub fn new(host: &str) -> Public {
+    pub fn new(host: &str, api_timeout: u64) -> Public {
         Public {
             client: reqwest::ClientBuilder::new()
-                // TODO: set from  user param
-                .timeout(Duration::from_secs(30))
+                .timeout(Duration::from_secs(api_timeout))
                 .build()
                 .expect("Client::new()"),
             host,
@@ -103,7 +104,6 @@ impl Public<'_> {
         resolution: Option<&str>,
         from_iso: Option<&str>,
         to_iso: Option<&str>,
-        // TODO: should be usize
         limit: Option<&str>,
     ) -> Result<CandlesResponse> {
         let path = format!("candles/{}", market);
@@ -169,7 +169,7 @@ impl Public<'_> {
     pub async fn get_public_retroactive_mining_rewards(
         &self,
         ethereum_address: &str,
-    ) -> Result<RetroactiveMiningRewardsResponse> {
+    ) -> Result<PublicRetroactiveMiningRewardsResponse> {
         let parameters = vec![("ethereumAddress", ethereum_address)];
         let response = self
             .get("rewards/public-retroactive-mining", parameters)

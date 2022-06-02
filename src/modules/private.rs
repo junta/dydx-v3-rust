@@ -5,7 +5,6 @@ use super::stark_sign::*;
 use chrono::prelude::*;
 use hmac::{Hmac, Mac};
 use http::{Method, StatusCode};
-use reqwest::RequestBuilder;
 use serde::Deserialize;
 use serde::Serialize;
 use serde_json::*;
@@ -25,12 +24,13 @@ impl Private<'_> {
     pub fn new<'a>(
         host: &'a str,
         network_id: usize,
+        api_timeout: u64,
         api_key_credentials: ApiKeyCredentials<'a>,
         stark_private_key: Option<&'a str>,
     ) -> Private<'a> {
         Private {
             client: reqwest::ClientBuilder::new()
-                .timeout(Duration::from_secs(30))
+                .timeout(Duration::from_secs(api_timeout))
                 .build()
                 .expect("Client::new()"),
             host,
@@ -242,15 +242,19 @@ impl Private<'_> {
         &self,
         user_params: ApiFastWithdrawalParams<'_>,
     ) -> Result<WithdrawalResponse> {
-        let client_id = generate_random_client_id();
-        let nonce = nonce_from_client_id(&client_id);
-        let fact = get_transfer_erc20_fact(
-            user_params.to_address,
-            6,
-            user_params.credit_amount,
-            "0x8707A5bf4C2842d46B31A405Ba41b858C0F876c4",
-            nonce,
-        );
+        // let client_id = generate_random_client_id();
+        let client_id = "8113483921639613";
+        // let nonce = nonce_from_client_id(&client_id);
+        // let fact = get_transfer_erc20_fact(
+        //     user_params.to_address,
+        //     6,
+        //     user_params.credit_amount,
+        //     "0x8707A5bf4C2842d46B31A405Ba41b858C0F876c4",
+        //     nonce,
+        // )
+        // .unwrap();
+
+        // dbg!(&fact.as_str());
 
         let signature = sign_fast_withdraw(
             self.network_id,
@@ -258,8 +262,10 @@ impl Private<'_> {
             user_params.lp_position_id,
             user_params.lp_stark_key,
             "0x8Fb814935f7E63DEB304B500180e19dF5167B50e",
-            fact,
+            user_params.to_address,
+            6,
             user_params.credit_amount,
+            "0x8707A5bf4C2842d46B31A405Ba41b858C0F876c4",
             &client_id,
             user_params.expiration,
             self.stark_private_key.unwrap(),
@@ -278,7 +284,7 @@ impl Private<'_> {
             to_address: user_params.to_address,
             lp_position_id: user_params.lp_position_id,
             expiration: expiration_second.as_str(),
-            client_id: client_id.as_str(),
+            client_id: client_id,
             signature: signature.as_str(),
         };
 
@@ -583,7 +589,6 @@ impl Private<'_> {
                     return Ok(response.json::<T>().await.unwrap())
                 }
                 _ => {
-                    // println!("{}", response.text().await.unwrap());
                     let error = ResponseError {
                         code: response.status().to_string(),
                         message: response.text().await.unwrap(),

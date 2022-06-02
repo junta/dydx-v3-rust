@@ -1,12 +1,9 @@
 pub use super::super::types::*;
 use super::super::{ResponseError, Result};
 use super::eth_sign::*;
-use byteorder::{BigEndian, ByteOrder, LittleEndian, NativeEndian};
-use chrono::Utc;
-use http::{Method, StatusCode};
+use http::StatusCode;
 use serde::Deserialize;
 use serde::Serialize;
-use serde_json::*;
 use std::time::Duration;
 
 #[derive(Debug, Clone)]
@@ -18,10 +15,10 @@ pub struct Onboarding<'a> {
 }
 
 impl Onboarding<'_> {
-    pub fn new<'a>(host: &'a str, network_id: usize, eth_private_key: &'a str) -> Onboarding<'a> {
+    pub fn new<'a>(host: &'a str, network_id: usize, api_timeout: u64, eth_private_key: &'a str) -> Onboarding<'a> {
         Onboarding {
             client: reqwest::ClientBuilder::new()
-                .timeout(Duration::from_secs(30))
+                .timeout(Duration::from_secs(api_timeout))
                 .build()
                 .expect("Client::new()"),
             host,
@@ -65,7 +62,6 @@ impl Onboarding<'_> {
             self.eth_private_key,
         )
         .unwrap();
-        println!("{}", signature);
         let sig_str = signature.as_str();
         let r_hex = &sig_str[2..66];
 
@@ -115,7 +111,6 @@ impl Onboarding<'_> {
                     return Ok(response.json::<T>().await.unwrap())
                 }
                 _ => {
-                    // println!("{}", response.text().await.unwrap());
                     let error = ResponseError {
                         code: response.status().to_string(),
                         message: response.text().await.unwrap(),

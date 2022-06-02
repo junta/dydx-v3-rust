@@ -4,6 +4,7 @@ macro_rules! b {
         };
 }
 
+use dydx_v3_rust::constants::*;
 use dydx_v3_rust::ClientOptions;
 use dydx_v3_rust::DydxClient;
 use speculate::speculate;
@@ -12,34 +13,32 @@ use speculate::speculate;
 speculate! {
         describe "ethPrivateTest" {
                 fn DydxClient() -> DydxClient<'static> {
-                        let test_eth_private_key = "2d06e246aaac1458ca0712e3faac6cacd2ed35bda0853998a80568948a3e3b46";
                         let options = ClientOptions {
                                 network_id: Some(3),
                                 api_timeout: None,
                                 api_key_credentials: None,
                                 stark_private_key: None,
-                                eth_private_key: Some(test_eth_private_key),
+                                eth_private_key: Some(TEST_PRIVATE_KEY),
                         };
-                        // DydxClient::new("https://api.dydx.exchange", Some(options))
+                        // DydxClient::new("https://api.dydx.exchange", options)
                         DydxClient::new("https://api.stage.dydx.exchange", options)
 
                 }
 
+
                 it "recovery" {
                         b!(async {
-                                let address = "0x72Be8d8d7d1d10d0e7f12Df508bB29b33cFFA06B";
-                                let response = DydxClient().eth_private.unwrap().recovery(address).await.unwrap();
-                                dbg!(&response);
+                                let _response = DydxClient().eth_private.unwrap().recovery(TEST_ADDRESS).await.unwrap();
+                                // dbg!(&_response);
                         });
                 }
 
                 it "createAndDeleteApiKey" {
                         b!(async {
-                                let address = "0x72Be8d8d7d1d10d0e7f12Df508bB29b33cFFA06B";
-                                let response = DydxClient().eth_private.unwrap().create_api_key(address).await.unwrap();
-                                dbg!(&response);
-                                let delete_response = DydxClient().eth_private.unwrap().delete_api_key(response.api_key.key.as_str(), address).await;
-                                dbg!(&delete_response);
+                                let _response = DydxClient().eth_private.unwrap().create_api_key(TEST_ADDRESS).await.unwrap();
+                                // dbg!(&_response);
+                                let _delete__response = DydxClient().eth_private.unwrap().delete_api_key(_response.api_key.key.as_str(), TEST_ADDRESS).await;
+                                // dbg!(&_delete__response);
                         });
                 }
         }

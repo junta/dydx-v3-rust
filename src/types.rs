@@ -228,8 +228,8 @@ pub struct HedgiePeriodResponseObject {
 #[non_exhaustive]
 pub struct NftRevealType;
 impl NftRevealType {
-    pub const Day: &'static str = "daily";
-    pub const Week: &'static str = "weekly";
+    pub const DAY: &'static str = "daily";
+    pub const WEEK: &'static str = "weekly";
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -407,7 +407,6 @@ pub struct OrderbookResponseOrder {
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Trade {
-    // TODO: change to enum constant
     pub side: String,
     pub size: String,
     pub price: String,
@@ -717,6 +716,13 @@ pub struct RetroactiveMiningRewardsResponseObject {
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
+pub struct PublicRetroactiveMiningRewardsResponse {
+    pub allocation: String,
+    pub target_volume: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct FillResponseObject {
     pub id: String,
     pub side: String,
@@ -741,8 +747,8 @@ pub struct RegistrationResponse {
 pub struct AccountPnlsResponse {
     pub absolute_pnl: String,
     pub percent_pnl: String,
-    pub absolute_rank: Option<String>,
-    pub percent_rank: Option<String>,
+    pub absolute_rank: Option<u16>,
+    pub percent_rank: Option<u16>,
     pub started_at: Option<String>,
     pub ends_at: Option<String>,
     pub updated_at: String,
@@ -767,8 +773,8 @@ pub struct HistoricalLeaderboardPnlsResponseObject {}
 #[serde(rename_all = "camelCase")]
 pub struct OrderResponseObject {
     pub id: String,
-    pub client_id: Option<String>,
-    pub account_id: Option<String>,
+    pub client_id: String,
+    pub account_id: String,
     pub market: String,
     pub side: String,
     pub price: String,
