@@ -98,7 +98,7 @@ see more examples in tests folder
 
 To call following APIs, you need python shared library to generate signature through [PyO3](https://github.com/PyO3/pyo3) and web3.py.
 
-- Create a new order or Withdraw API which requires STARK signature
+- Create a new order or Withdraw or Transfer API which requires STARK signature
 - Onboarding or EthPrivate(apiKeys) module's API which requires EIP-712-compliant Ethereum signature
 
 Here is sample installation steps via pyenv

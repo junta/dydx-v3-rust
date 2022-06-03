@@ -205,6 +205,42 @@ impl Private<'_> {
         response
     }
 
+    pub async fn create_transfer(
+        &self,
+        user_params: TransferParams<'_>,
+    ) -> Result<TransferResponse> {
+        let client_id = generate_random_client_id();
+
+        let signature = sign_transfer(
+            self.network_id,
+            user_params.position_id,
+            user_params.receiver_position_id,
+            user_params.receiver_public_key,
+            user_params.amount,
+            &client_id,
+            user_params.expiration,
+            self.stark_private_key.unwrap(),
+        )
+        .unwrap();
+
+        let naive = NaiveDateTime::from_timestamp(user_params.expiration, 0);
+        let datetime: DateTime<Utc> = DateTime::from_utc(naive, Utc);
+        let expiration_second = datetime.format("%Y-%m-%dT%H:%M:%S%.3fZ").to_string();
+
+        let parameters = ApiTransfer {
+            amount: user_params.amount,
+            receiver_account_id: user_params.receiver_account_id,
+            expiration: expiration_second.as_str(),
+            client_id: client_id.as_str(),
+            signature: signature.as_str(),
+        };
+
+        let response = self
+            .request("transfers", Method::POST, Vec::new(), parameters)
+            .await;
+        response
+    }
+
     pub async fn create_withdraw(
         &self,
         user_params: ApiWithdrawParams<'_>,

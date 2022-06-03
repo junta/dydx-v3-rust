@@ -916,6 +916,16 @@ pub struct TransferParams<'a> {
 
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
+pub struct ApiTransfer<'a> {
+    pub amount: &'a str,
+    pub receiver_account_id: &'a str,
+    pub expiration: &'a str,
+    pub client_id: &'a str,
+    pub signature: &'a str,
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ApiWithdrawParams<'a> {
     pub position_id: &'a str,
     pub amount: &'a str,

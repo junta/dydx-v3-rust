@@ -85,12 +85,12 @@ speculate! {
                         });
                 }
 
-                it "getCandlesWithNoParameter" {
-                        b!(async {
-                                let _response = DydxClient().public.get_candles(DydxMarket::ETH_USD, None, None, None, None).await.unwrap();
-                                // dbg!(_response);
-                        });
-                }
+                // it "getCandlesWithNoParameter" {
+                //         b!(async {
+                //                 let _response = DydxClient().public.get_candles(DydxMarket::ETH_USD, None, None, None, None).await.unwrap();
+                //                 // dbg!(_response);
+                //         });
+                // }
 
                 it "getConfig" {
                         b!(async {

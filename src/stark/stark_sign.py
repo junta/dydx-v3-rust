@@ -1,6 +1,7 @@
 from starkex.order import SignableOrder
 from starkex.withdrawal import SignableWithdrawal
 from starkex.conditional_transfer import SignableConditionalTransfer
+from starkex.transfer import SignableTransfer
 from web3 import Web3
 from starkex.helpers import nonce_from_client_id
 
@@ -19,6 +20,12 @@ def sign_fast_withdraw(network_id, sender_position_id, receiver_position_id, rec
     withdraw = SignableConditionalTransfer(network_id, sender_position_id, receiver_position_id, receiver_public_key, fact_registry_address, fact, human_amount, client_id, expiration_epoch_seconds)
     signature = withdraw.sign(private_key)
     return signature
+
+def sign_transfer(network_id, sender_position_id, receiver_position_id, receiver_public_key,  human_amount, client_id, expiration_epoch_seconds, private_key):
+    transfer = SignableTransfer(network_id, sender_position_id, receiver_position_id, receiver_public_key, human_amount, client_id, expiration_epoch_seconds)
+    signature = transfer.sign(private_key)
+    return signature
+
 
 def get_transfer_erc20_fact(
     recipient,
