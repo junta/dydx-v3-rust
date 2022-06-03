@@ -1,11 +1,11 @@
 [package]
 name = "dydx-v3-rust"
-version = "0.1.7"
+version = "0.2.0"
 edition = "2021"
 authors = ["0xIbuki"]
 description = "Rust SDK for dYdX v3 API"
 license = "MIT"
-keywords = ["sdk", "dydx"]
+keywords = ["sdk", "dydx", "api"]
 homepage = "https://docs.dydx.exchange/"
 documentation = "https://docs.rs/dydx-v3-rust/0.1.0/dydx_v3_rust/"
 repository = "https://github.com/junta/dydx-v3-rust"

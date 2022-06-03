@@ -1,4 +1,4 @@
-Work in progress repo of Rust client for dYdX (v3 API).
+Rust client for dYdX (v3 API).
 
 [dYdX API Docs](https://docs.dydx.exchange/)
 
@@ -8,7 +8,7 @@ Install [dydx-v3-rust](https://crates.io/crates/dydx-v3-rust) from crates.io. Ad
 
 ```rust
 [dependencies]
-dydx-v3-rust = "0.1.7"
+dydx-v3-rust = "0.2.0"
 tokio = { version = "1.18.2", features = ["full"] }
 ```
 
@@ -42,7 +42,7 @@ async fn main() {
 
 ## Private API
 
-Sample code to call Get Accounts API and then Create New Order API
+Sample code to call Get Accounts API and then Create New Order API(recommend to use pattern match for handling response than unwrap() in your real code.)
 
 ```rust
 use chrono::{DateTime, Duration, Utc};
@@ -56,7 +56,7 @@ async fn main() {
         passphrase: "YOUR-API-PASSPHRASE",
     };
     let options = ClientOptions {
-        network_id: Some(1),
+        network_id: Some(1), // mainnet: 1, testnet: 3
         api_timeout: None,
         api_key_credentials: Some(api_key),
         stark_private_key: Some("YOUR-STARK-PRIVATE-KEY"),
