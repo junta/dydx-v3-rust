@@ -1,6 +1,6 @@
+use super::super::constants::*;
 use super::super::helper::*;
 use super::super::types::*;
-use super::super::constants::*;
 use super::super::{ResponseError, Result};
 use super::stark_sign::*;
 use chrono::prelude::*;
@@ -162,7 +162,11 @@ impl Private<'_> {
     }
 
     pub async fn create_order(&self, user_params: ApiOrderParams<'_>) -> Result<OrderResponse> {
-        let client_id = generate_random_client_id();
+        let client_id = if user_params.client_id.is_some() {
+            user_params.client_id.unwrap().to_owned()
+        } else {
+            generate_random_client_id()
+        };
 
         let signature = sign_order(
             self.network_id,
@@ -172,7 +176,7 @@ impl Private<'_> {
             user_params.size,
             user_params.price,
             user_params.limit_fee,
-            &client_id,
+            client_id.as_str(),
             user_params.expiration,
             self.stark_private_key.unwrap(),
         )
@@ -280,9 +284,17 @@ impl Private<'_> {
         user_params: ApiFastWithdrawalParams<'_>,
     ) -> Result<WithdrawalResponse> {
         let client_id = generate_random_client_id();
-        
-        let fact_address = if self.network_id == 1 { FACT_REGISTRY_CONTRACT_MAINNET } else { FACT_REGISTRY_CONTRACT_ROPSTEN };
-        let token_address = if self.network_id == 1 { ASSET_USDC_CONTRACT_MAINNET } else { FACT_REGISTRY_CONTRACT_ROPSTEN };
+
+        let fact_address = if self.network_id == 1 {
+            FACT_REGISTRY_CONTRACT_MAINNET
+        } else {
+            FACT_REGISTRY_CONTRACT_ROPSTEN
+        };
+        let token_address = if self.network_id == 1 {
+            ASSET_USDC_CONTRACT_MAINNET
+        } else {
+            FACT_REGISTRY_CONTRACT_ROPSTEN
+        };
 
         let signature = sign_fast_withdraw(
             self.network_id,
