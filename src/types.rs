@@ -539,6 +539,8 @@ pub struct ApiOrderParams<'a> {
     pub post_only: bool,
     pub limit_fee: &'a str,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub client_id: Option<&'a str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub cancel_id: Option<&'a str>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub trigger_price: Option<&'a str>,

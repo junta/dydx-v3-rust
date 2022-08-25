@@ -1,7 +1,7 @@
 macro_rules! b {
-        ($e:expr) => {
-                tokio_test::block_on($e)
-        };
+    ($e:expr) => {
+        tokio_test::block_on($e)
+    };
 }
 
 use chrono::{DateTime, Duration, Utc};
@@ -48,6 +48,7 @@ speculate! {
                                 size: "0.01",
                                 price: "100000",
                                 limit_fee: "0.1",
+                                client_id: None,
                                 cancel_id: None,
                                 trigger_price: None,
                                 trailing_percent: None,
@@ -273,6 +274,7 @@ speculate! {
                                         size: "0.01",
                                         price: "100000",
                                         limit_fee: "0.1",
+                                        client_id: None,
                                         cancel_id: None,
                                         trigger_price: None,
                                         trailing_percent: None,
