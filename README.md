@@ -84,6 +84,7 @@ async fn main() {
         size: "0.01",
         price: "100000",
         limit_fee: "0.1",
+        client_id: None,
         cancel_id: None,
         trigger_price: None,
         trailing_percent: None,
