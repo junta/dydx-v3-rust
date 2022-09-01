@@ -11,7 +11,7 @@ pub struct ResponseError {
 
 impl fmt::Display for ResponseError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "SuperError is here!")
+        write!(f, "{}", &self.message)
     }
 }
 
