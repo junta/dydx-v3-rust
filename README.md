@@ -8,7 +8,7 @@ Install [dydx-v3-rust](https://crates.io/crates/dydx-v3-rust) from crates.io. Ad
 
 ```rust
 [dependencies]
-dydx-v3-rust = "0.2.0"
+dydx-v3-rust = { git = "https://github.com/junta/dydx-v3-rust" }
 tokio = { version = "1.18.2", features = ["full"] }
 ```
 
