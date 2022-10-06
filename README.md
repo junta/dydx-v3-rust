@@ -56,7 +56,7 @@ async fn main() {
         passphrase: "YOUR-API-PASSPHRASE",
     };
     let options = ClientOptions {
-        network_id: Some(1), // mainnet: 1, testnet: 3
+        network_id: Some(1), // mainnet: 1, testnet: 5
         api_timeout: None,
         api_key_credentials: Some(api_key),
         stark_private_key: Some("YOUR-STARK-PRIVATE-KEY"),
