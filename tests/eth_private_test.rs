@@ -14,14 +14,13 @@ speculate! {
         describe "ethPrivateTest" {
                 fn DydxClient() -> DydxClient<'static> {
                         let options = ClientOptions {
-                                network_id: Some(3),
+                                network_id: Some(TESTNET_NETWORK_ID),
                                 api_timeout: None,
                                 api_key_credentials: None,
                                 stark_private_key: None,
                                 eth_private_key: Some(TEST_PRIVATE_KEY),
                         };
-                        // DydxClient::new("https://api.dydx.exchange", options)
-                        DydxClient::new("https://api.stage.dydx.exchange", options)
+                        DydxClient::new(TESTNET_API_URL, options)
 
                 }
 

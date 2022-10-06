@@ -17,20 +17,19 @@ speculate! {
         describe "privateTest" {
                 fn DydxClient() -> DydxClient<'static> {
                         let api_key = ApiKeyCredentials {
-                                // test
-                                key: "d58be525-1ec9-5775-c435-61c12a3c4d6a",
-                                secret: "cYKIG0mX0mLXyw4IG1pBUf7qx1ycnUm593pTKnQT",
-                                passphrase: "-rgYL26TLDp62Aq5BTek"
+                                // test account
+                                key: "6761e340-7c01-065e-d3e4-8338bfa4f0b7",
+                                secret: "kaWlSJiFfIyIa0kPkGepTwVhtWzVxmvvXMezzRw2",
+                                passphrase: "-VlJxCva5OhyhQEXWtFy"
                         };
                         let options = ClientOptions {
-                                network_id: Some(3),
+                                network_id: Some(TESTNET_NETWORK_ID),
                                 api_timeout: None,
                                 api_key_credentials: Some(api_key),
-                                stark_private_key: Some("039dd31bce09db7330e9fce956f111a5e9fc2be2e2aaecb065f05e8a42fcbca4"),
+                                stark_private_key: Some(TEST_STARK_PRIVATE_KEY),
                                 eth_private_key: None
                         };
-                        // DydxClient::new("https://api.dydx.exchange", Some(options))
-                        DydxClient::new("https://api.stage.dydx.exchange", options)
+                        DydxClient::new(TESTNET_API_URL, options)
                     }
 
                 async fn create_test_order() -> OrderResponse {
@@ -70,7 +69,7 @@ speculate! {
 
                 it "getAccountId" {
                         b!(async {
-                                let _uuid = get_account_id("0x0De1C59f3AA4938B0bDcC070B4Fa9F395A4D6d25");
+                                let _uuid = get_account_id(TEST_ADDRESS);
                                 // dbg!(_uuid);
                         });
                 }
@@ -92,7 +91,7 @@ speculate! {
                 it "getAccount" {
                         b!(async {
                                 let _response = DydxClient().private.unwrap().get_account(TEST_ADDRESS).await.unwrap();
-                                // dbg!(_response);
+                                dbg!(_response);
                         });
                 }
 
@@ -208,10 +207,10 @@ speculate! {
                                 let transfer_params = TransferParams {
                                         amount: "1",
                                         position_id: POSITION_ID,
-                                        // send to test account 12
-                                        receiver_account_id: "a39835a0-446a-5cda-9692-a590ef4f0c8e",
-                                        receiver_public_key: "02a060ccc9ef77d14b88d8b53a0119fe651dd8bb5dea009e539d4d31856f8398",
-                                        receiver_position_id: "62302",
+                                        // send to test account 1
+                                        receiver_account_id: "0192dc2d-a344-5dc1-ba37-1c4af5259a61",
+                                        receiver_public_key: "05d319b5e52ad99ff8dd8bbc45bf1c71abf66d9d6d5ea7dd886d4bfcba7fe61f",
+                                        receiver_position_id: "227",
                                         expiration: expiration_unix,
                                 };
                                 let _response = DydxClient().private.unwrap().create_transfer(transfer_params).await.unwrap();

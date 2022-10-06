@@ -22,7 +22,7 @@ speculate! {
                                 stark_private_key: None,
                                 eth_private_key: None
                         };
-                        DydxClient::new("https://api.dydx.exchange", options)
+                        DydxClient::new(MAINNET_API_URL, options)
                     }
 
                 it "getMarket" {
