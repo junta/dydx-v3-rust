@@ -1,4 +1,4 @@
-web3 >= 5.29.2
+web3 ~= 5.29
 python-dateutil
 ecdsa
 mpmath

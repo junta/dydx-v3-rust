@@ -197,27 +197,6 @@ speculate! {
                         });
                 }
 
-
-                it "createTransfer" {
-                        b!(async {
-                                let datetime_now: DateTime<Utc> = Utc::now();
-                                let expiration = datetime_now + Duration::days(10);
-                                let expiration_unix = expiration.timestamp();
-
-                                let transfer_params = TransferParams {
-                                        amount: "1",
-                                        position_id: POSITION_ID,
-                                        // send to test account 1
-                                        receiver_account_id: "0192dc2d-a344-5dc1-ba37-1c4af5259a61",
-                                        receiver_public_key: "05d319b5e52ad99ff8dd8bbc45bf1c71abf66d9d6d5ea7dd886d4bfcba7fe61f",
-                                        receiver_position_id: "227",
-                                        expiration: expiration_unix,
-                                };
-                                let _response = DydxClient().private.unwrap().create_transfer(transfer_params).await.unwrap();
-                                // dbg!(_response);
-                        });
-                }
-
                 it "updateUser" {
                         b!(async {
                                 let userData = UserParams {

@@ -1,10 +1,4 @@
 /target
 Cargo.lock
 .env
-src/stark/__pycache__
-src/stark/starkex/__pycache__
-src/eth_signing/__pycache__
-src/eth_signing/eth_account/__pycache__
-src/eth_signing/eth_account/hdaccount/__pycache__
-src/eth_signing/eth_account/signers/__pycache__
-src/eth_signing/eth_account/_utils/__pycache__
+__pycache__/
