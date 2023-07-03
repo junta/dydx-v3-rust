@@ -52,6 +52,7 @@ speculate! {
                                 trigger_price: None,
                                 trailing_percent: None,
                                 expiration: expiration_unix,
+                                reduce_only: Some(false),
                         };
                         let order = DydxClient().private.unwrap().create_order(order_params).await.unwrap();
                         order
@@ -257,6 +258,7 @@ speculate! {
                                         trigger_price: None,
                                         trailing_percent: None,
                                         expiration: expiration_unix,
+                                        reduce_only: Some(false),
                                 };
                                 let order = DydxClient().private.unwrap().create_order(order_params).await.unwrap();
 

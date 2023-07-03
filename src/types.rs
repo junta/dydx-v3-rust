@@ -546,6 +546,8 @@ pub struct ApiOrderParams<'a> {
     pub trigger_price: Option<&'a str>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub trailing_percent: Option<&'a str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reduce_only: Option<bool>,
     pub expiration: i64,
 }
 
